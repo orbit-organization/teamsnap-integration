@@ -3,7 +3,7 @@
 ## What You Need
 
 1. Your TeamSnap Client ID and Client Secret from https://auth.teamsnap.com/oauth/applications/8481
-2. Python 3.8+ installed on your computer
+2. Python 3.12+ installed on your computer
 3. `uv` package manager (recommended) or `pip`
 
 ## Setup (3 Steps)

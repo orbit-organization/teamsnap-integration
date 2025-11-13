@@ -24,7 +24,7 @@ A clean, modern Python integration with the TeamSnap API v3, featuring OAuth 2.0
 
 ## Prerequisites
 
-- Python 3.7 or higher
+- Python 3.12 or higher
 - A TeamSnap account
 - TeamSnap OAuth application credentials
 

@@ -54,7 +54,7 @@ uv pip list --outdated
 
 ## Python Version Updates
 
-### Current: Python 3.8+
+### Current: Python 3.12+
 
 Update the Python version when a new version is released:
 
@@ -80,13 +80,10 @@ Update the Python version when a new version is released:
 
 Stay current with supported Python versions:
 
-- **Python 3.8:** EOL October 2024 (⚠️ Already EOL!)
-- **Python 3.9:** EOL October 2025
-- **Python 3.10:** EOL October 2026
-- **Python 3.11:** EOL October 2027
 - **Python 3.12:** EOL October 2028
+- **Python 3.13:** EOL October 2029
 
-**Recommendation:** Drop support for EOL versions to benefit from security updates.
+**Note:** This project requires Python 3.12+ to use modern language features and ensure security support.
 
 ## Security Updates
 
