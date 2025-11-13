@@ -146,7 +146,9 @@ def main():
                                 print(f"      Type: {event_info.get('type', 'N/A')}")
                                 print(f"      Start: {event_info.get('start_date', 'N/A')}")
                                 print(f"      Location: {event_info.get('location_name', 'N/A')}")
-                                print(f"      Notes: {event_info.get('notes', 'N/A')[:50]}...")  # First 50 chars
+                                notes = event_info.get('notes') or 'N/A'
+                                notes_display = notes[:50] + '...' if len(notes) > 50 else notes
+                                print(f"      Notes: {notes_display}")
 
                 else:
                     print("\n⚠️  No teams found for this user")

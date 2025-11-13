@@ -251,6 +251,97 @@ class TeamSnapClient:
         response = self.get('/locations/search', params=params)
         return response.get('collection', {}).get('items', [])
 
+    def search_forum_topics(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for forum topics (message board topics)
+
+        Args:
+            team_id: Filter topics by team ID
+
+        Returns:
+            List of forum topic dictionaries
+        """
+        params = {}
+        if team_id:
+            params['team_id'] = team_id
+
+        response = self.get('/forum_topics/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
+    def search_forum_posts(self, team_id: Optional[int] = None, forum_topic_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for forum posts (message board posts/replies)
+
+        Args:
+            team_id: Filter posts by team ID
+            forum_topic_id: Filter posts by topic ID
+
+        Returns:
+            List of forum post dictionaries
+        """
+        params = {}
+        if team_id:
+            params['team_id'] = team_id
+        if forum_topic_id:
+            params['forum_topic_id'] = forum_topic_id
+
+        response = self.get('/forum_posts/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
+    def search_broadcast_emails(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for broadcast emails sent to the team
+
+        Args:
+            team_id: Filter emails by team ID
+
+        Returns:
+            List of broadcast email dictionaries
+        """
+        params = {}
+        if team_id:
+            params['team_id'] = team_id
+
+        response = self.get('/broadcast_emails/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
+    def search_messages(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for messages
+
+        Args:
+            team_id: Filter messages by team ID
+
+        Returns:
+            List of message dictionaries
+        """
+        params = {}
+        if team_id:
+            params['team_id'] = team_id
+
+        response = self.get('/messages/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
+    def search_assignments(self, team_id: Optional[int] = None, event_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for assignments (tasks assigned to members)
+
+        Args:
+            team_id: Filter assignments by team ID
+            event_id: Filter assignments by event ID
+
+        Returns:
+            List of assignment dictionaries
+        """
+        params = {}
+        if team_id:
+            params['team_id'] = team_id
+        if event_id:
+            params['event_id'] = event_id
+
+        response = self.get('/assignments/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
     def get_root(self) -> Dict[str, Any]:
         """
         Get API root information (available endpoints and links)
