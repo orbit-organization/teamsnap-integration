@@ -1,0 +1,931 @@
+{
+  "timestamp": "2025-11-13T18:12:21.489164",
+  "version": "3.867.0",
+  "endpoints": {
+    "links": [
+      {
+        "rel": "advertisements",
+        "href": "https://api.teamsnap.com/v3/advertisements",
+        "deprecated": false
+      },
+      {
+        "rel": "apiv2_root",
+        "href": "https://api.teamsnap.com/v2",
+        "deprecated": false
+      },
+      {
+        "rel": "authorization",
+        "href": "https://auth.teamsnap.com",
+        "deprecated": false
+      },
+      {
+        "rel": "authorization_root",
+        "href": "https://auth.teamsnap.com",
+        "deprecated": false
+      },
+      {
+        "rel": "authorization_magic_links",
+        "href": "https://auth.teamsnap.com/magic_links",
+        "deprecated": false
+      },
+      {
+        "rel": "authorization_password_resets",
+        "href": "https://auth.teamsnap.com/password_resets",
+        "deprecated": false
+      },
+      {
+        "rel": "authorization_tokens",
+        "href": "https://auth.teamsnap.com/oauth/token",
+        "deprecated": false
+      },
+      {
+        "rel": "authorization_user_registrations",
+        "href": "https://auth.teamsnap.com/user_registrations",
+        "deprecated": false
+      },
+      {
+        "rel": "authorization_user_registration_initializations",
+        "href": "https://auth.teamsnap.com/user_registration_initializations",
+        "deprecated": false
+      },
+      {
+        "rel": "authorization_users",
+        "href": "https://auth.teamsnap.com/users",
+        "deprecated": false
+      },
+      {
+        "rel": "android_subscriptions",
+        "href": "https://api.teamsnap.com/v3/android_subscriptions",
+        "deprecated": false
+      },
+      {
+        "rel": "apple_paid_features",
+        "href": "https://api.teamsnap.com/v3/apple_paid_features",
+        "deprecated": false
+      },
+      {
+        "rel": "apn_devices",
+        "href": "https://api.teamsnap.com/v3/apn_devices",
+        "deprecated": false
+      },
+      {
+        "rel": "assignments",
+        "href": "https://api.teamsnap.com/v3/assignments",
+        "deprecated": false
+      },
+      {
+        "rel": "availabilities",
+        "href": "https://api.teamsnap.com/v3/availabilities",
+        "deprecated": false
+      },
+      {
+        "rel": "availability_summaries",
+        "href": "https://api.teamsnap.com/v3/availability_summaries",
+        "deprecated": false
+      },
+      {
+        "rel": "batch_invoices",
+        "href": "https://api.teamsnap.com/v3/batch_invoices",
+        "deprecated": false
+      },
+      {
+        "rel": "batch_invoices_aggregates",
+        "href": "https://api.teamsnap.com/v3/batch_invoices_aggregates",
+        "deprecated": false
+      },
+      {
+        "rel": "batch_invoice_line_items",
+        "href": "https://api.teamsnap.com/v3/batch_invoice_line_items",
+        "deprecated": false
+      },
+      {
+        "rel": "batch_invoice_payment_schedules",
+        "href": "https://api.teamsnap.com/v3/batch_invoice_payment_schedules",
+        "deprecated": false
+      },
+      {
+        "rel": "batch_invoice_payment_schedule_details",
+        "href": "https://api.teamsnap.com/v3/batch_invoice_payment_schedule_details",
+        "deprecated": false
+      },
+      {
+        "rel": "broadcast_email_attachments",
+        "href": "https://api.teamsnap.com/v3/broadcast_email_attachments",
+        "deprecated": false
+      },
+      {
+        "rel": "broadcast_emails",
+        "href": "https://api.teamsnap.com/v3/broadcast_emails",
+        "deprecated": false
+      },
+      {
+        "rel": "broadcast_alerts",
+        "href": "https://api.teamsnap.com/v3/broadcast_alerts",
+        "deprecated": false
+      },
+      {
+        "rel": "contact_email_addresses",
+        "href": "https://api.teamsnap.com/v3/contact_email_addresses",
+        "deprecated": false
+      },
+      {
+        "rel": "contact_phone_numbers",
+        "href": "https://api.teamsnap.com/v3/contact_phone_numbers",
+        "deprecated": false
+      },
+      {
+        "rel": "contacts",
+        "href": "https://api.teamsnap.com/v3/contacts",
+        "deprecated": false
+      },
+      {
+        "rel": "countries",
+        "href": "https://api.teamsnap.com/v3/countries",
+        "deprecated": false
+      },
+      {
+        "rel": "currencies",
+        "href": "https://api.teamsnap.com/v3/currencies",
+        "deprecated": false
+      },
+      {
+        "rel": "custom_data",
+        "href": "https://api.teamsnap.com/v3/custom_data",
+        "deprecated": false
+      },
+      {
+        "rel": "custom_fields",
+        "href": "https://api.teamsnap.com/v3/custom_fields",
+        "deprecated": false
+      },
+      {
+        "rel": "league_custom_data",
+        "href": "https://api.teamsnap.com/v3/league_custom_data",
+        "deprecated": false
+      },
+      {
+        "rel": "league_custom_fields",
+        "href": "https://api.teamsnap.com/v3/league_custom_fields",
+        "deprecated": false
+      },
+      {
+        "rel": "divisions",
+        "href": "https://api.teamsnap.com/v3/divisions",
+        "deprecated": false
+      },
+      {
+        "rel": "division_aggregates",
+        "href": "https://api.teamsnap.com/v3/division_aggregates",
+        "deprecated": false
+      },
+      {
+        "rel": "division_behaviors",
+        "href": "https://api.teamsnap.com/v3/division_behaviors",
+        "deprecated": false
+      },
+      {
+        "rel": "division_contact_email_addresses",
+        "href": "https://api.teamsnap.com/v3/division_contact_email_addresses",
+        "deprecated": false
+      },
+      {
+        "rel": "division_contact_phone_numbers",
+        "href": "https://api.teamsnap.com/v3/division_contact_phone_numbers",
+        "deprecated": false
+      },
+      {
+        "rel": "division_contacts",
+        "href": "https://api.teamsnap.com/v3/division_contacts",
+        "deprecated": false
+      },
+      {
+        "rel": "division_events",
+        "href": "https://api.teamsnap.com/v3/division_events",
+        "deprecated": false
+      },
+      {
+        "rel": "division_structure_health_data",
+        "href": "https://api.teamsnap.com/v3/division_structure_health_data",
+        "deprecated": false
+      },
+      {
+        "rel": "division_locations",
+        "href": "https://api.teamsnap.com/v3/division_locations",
+        "deprecated": false
+      },
+      {
+        "rel": "division_member_email_addresses",
+        "href": "https://api.teamsnap.com/v3/division_member_email_addresses",
+        "deprecated": false
+      },
+      {
+        "rel": "division_member_phone_numbers",
+        "href": "https://api.teamsnap.com/v3/division_member_phone_numbers",
+        "deprecated": false
+      },
+      {
+        "rel": "division_members",
+        "href": "https://api.teamsnap.com/v3/division_members",
+        "deprecated": false
+      },
+      {
+        "rel": "division_members_preferences",
+        "href": "https://api.teamsnap.com/v3/division_members_preferences",
+        "deprecated": false
+      },
+      {
+        "rel": "division_rate_packages",
+        "href": "https://api.teamsnap.com/v3/division_rate_packages",
+        "deprecated": false
+      },
+      {
+        "rel": "division_events_imports",
+        "href": "https://api.teamsnap.com/v3/division_events_imports",
+        "deprecated": false
+      },
+      {
+        "rel": "division_stores",
+        "href": "https://api.teamsnap.com/v3/division_stores",
+        "deprecated": false
+      },
+      {
+        "rel": "division_regsaver_options",
+        "href": "https://api.teamsnap.com/v3/division_regsaver_options",
+        "deprecated": false
+      },
+      {
+        "rel": "division_team_standings",
+        "href": "https://api.teamsnap.com/v3/division_team_standings",
+        "deprecated": false
+      },
+      {
+        "rel": "divisions_preferences",
+        "href": "https://api.teamsnap.com/v3/divisions_preferences",
+        "deprecated": false
+      },
+      {
+        "rel": "event_statistics",
+        "href": "https://api.teamsnap.com/v3/event_statistics",
+        "deprecated": false
+      },
+      {
+        "rel": "events",
+        "href": "https://api.teamsnap.com/v3/events",
+        "deprecated": false
+      },
+      {
+        "rel": "event_lineups",
+        "href": "https://api.teamsnap.com/v3/event_lineups",
+        "deprecated": false
+      },
+      {
+        "rel": "event_lineup_entries",
+        "href": "https://api.teamsnap.com/v3/event_lineup_entries",
+        "deprecated": false
+      },
+      {
+        "rel": "facebook_pages",
+        "href": "https://api.teamsnap.com/v3/facebook_pages",
+        "deprecated": false
+      },
+      {
+        "rel": "forecasts",
+        "href": "https://api.teamsnap.com/v3/forecasts",
+        "deprecated": false
+      },
+      {
+        "rel": "forum_posts",
+        "href": "https://api.teamsnap.com/v3/forum_posts",
+        "deprecated": false
+      },
+      {
+        "rel": "forum_subscriptions",
+        "href": "https://api.teamsnap.com/v3/forum_subscriptions",
+        "deprecated": false
+      },
+      {
+        "rel": "forum_topics",
+        "href": "https://api.teamsnap.com/v3/forum_topics",
+        "deprecated": false
+      },
+      {
+        "rel": "fundraising_campaigns",
+        "href": "https://api.teamsnap.com/v3/fundraising_campaigns",
+        "deprecated": false
+      },
+      {
+        "rel": "geocoded_locations",
+        "href": "https://api.teamsnap.com/v3/geocoded_locations",
+        "deprecated": false
+      },
+      {
+        "rel": "gcm_devices",
+        "href": "https://api.teamsnap.com/v3/gcm_devices",
+        "deprecated": false
+      },
+      {
+        "rel": "card_feed",
+        "href": "https://hoyle.teamsnap.com/cards",
+        "deprecated": false
+      },
+      {
+        "rel": "health_check_questionnaires",
+        "href": "https://api.teamsnap.com/v3/health_check_questionnaires",
+        "deprecated": false
+      },
+      {
+        "rel": "health_check_questionnaire_templates",
+        "href": "https://api.teamsnap.com/v3/health_check_questionnaire_templates",
+        "deprecated": false
+      },
+      {
+        "rel": "health_check_questionnaire_template_questions",
+        "href": "https://api.teamsnap.com/v3/health_check_questionnaire_template_questions",
+        "deprecated": false
+      },
+      {
+        "rel": "invitations",
+        "href": "https://api.teamsnap.com/v3/invitations",
+        "deprecated": false
+      },
+      {
+        "rel": "invoices",
+        "href": "https://api.teamsnap.com/v3/invoices",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_line_items",
+        "href": "https://api.teamsnap.com/v3/invoice_line_items",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_messages",
+        "href": "https://api.teamsnap.com/v3/invoice_messages",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_payment_options_amounts",
+        "href": "https://api.teamsnap.com/v3/invoice_payment_options_amounts",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_schedule_payment_options_amounts",
+        "href": "https://api.teamsnap.com/v3/invoice_schedule_payment_options_amounts",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_schedule_payments_payment_options_amounts",
+        "href": "https://api.teamsnap.com/v3/invoice_schedule_payments_payment_options_amounts",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_payments",
+        "href": "https://api.teamsnap.com/v3/invoice_payments",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_payment_schedules",
+        "href": "https://api.teamsnap.com/v3/invoice_payment_schedules",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_payment_transactions",
+        "href": "https://api.teamsnap.com/v3/invoice_payment_transactions",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_recipients",
+        "href": "https://api.teamsnap.com/v3/invoice_recipients",
+        "deprecated": false
+      },
+      {
+        "rel": "invoice_recipients_invoices_aggregates",
+        "href": "https://api.teamsnap.com/v3/invoice_recipients_invoices_aggregates",
+        "deprecated": false
+      },
+      {
+        "rel": "invoicing_health_data",
+        "href": "https://api.teamsnap.com/v3/invoicing_health_data",
+        "deprecated": false
+      },
+      {
+        "rel": "league_registrant_documents",
+        "href": "https://api.teamsnap.com/v3/league_registrant_documents",
+        "deprecated": false
+      },
+      {
+        "rel": "locations",
+        "href": "https://api.teamsnap.com/v3/locations",
+        "deprecated": false
+      },
+      {
+        "rel": "me",
+        "href": "https://api.teamsnap.com/v3/me",
+        "deprecated": false
+      },
+      {
+        "rel": "member_assignments",
+        "href": "https://api.teamsnap.com/v3/member_assignments",
+        "deprecated": false
+      },
+      {
+        "rel": "member_email_addresses",
+        "href": "https://api.teamsnap.com/v3/member_email_addresses",
+        "deprecated": false
+      },
+      {
+        "rel": "member_balances",
+        "href": "https://api.teamsnap.com/v3/member_balances",
+        "deprecated": false
+      },
+      {
+        "rel": "member_files",
+        "href": "https://api.teamsnap.com/v3/member_files",
+        "deprecated": false
+      },
+      {
+        "rel": "member_links",
+        "href": "https://api.teamsnap.com/v3/member_links",
+        "deprecated": false
+      },
+      {
+        "rel": "member_participations",
+        "href": "https://api.teamsnap.com/v3/member_participations",
+        "deprecated": false
+      },
+      {
+        "rel": "member_payments",
+        "href": "https://api.teamsnap.com/v3/member_payments",
+        "deprecated": false
+      },
+      {
+        "rel": "member_phone_numbers",
+        "href": "https://api.teamsnap.com/v3/member_phone_numbers",
+        "deprecated": false
+      },
+      {
+        "rel": "member_photos",
+        "href": "https://api.teamsnap.com/v3/member_photos",
+        "deprecated": false
+      },
+      {
+        "rel": "member_registration_signups",
+        "href": "https://api.teamsnap.com/v3/member_registration_signups",
+        "deprecated": false
+      },
+      {
+        "rel": "member_statistics",
+        "href": "https://api.teamsnap.com/v3/member_statistics",
+        "deprecated": false
+      },
+      {
+        "rel": "members",
+        "href": "https://api.teamsnap.com/v3/members",
+        "deprecated": false
+      },
+      {
+        "rel": "members_preferences",
+        "href": "https://api.teamsnap.com/v3/members_preferences",
+        "deprecated": false
+      },
+      {
+        "rel": "message_data",
+        "href": "https://api.teamsnap.com/v3/message_data",
+        "deprecated": false
+      },
+      {
+        "rel": "messages",
+        "href": "https://api.teamsnap.com/v3/messages",
+        "deprecated": false
+      },
+      {
+        "rel": "message_reply_statuses",
+        "href": "https://api.teamsnap.com/v3/message_reply_statuses",
+        "deprecated": false
+      },
+      {
+        "rel": "mobile_advertising_identities",
+        "href": "https://api.teamsnap.com/v3/mobile_advertising_identities",
+        "deprecated": false
+      },
+      {
+        "rel": "opponents",
+        "href": "https://api.teamsnap.com/v3/opponents",
+        "deprecated": false
+      },
+      {
+        "rel": "opponents_results",
+        "href": "https://api.teamsnap.com/v3/opponents_results",
+        "deprecated": false
+      },
+      {
+        "rel": "partners_user_preferences",
+        "href": "https://api.teamsnap.com/v3/partners_user_preferences",
+        "deprecated": false
+      },
+      {
+        "rel": "partners_preferences",
+        "href": "https://api.teamsnap.com/v3/partners_preferences",
+        "deprecated": false
+      },
+      {
+        "rel": "pay_invoice_details",
+        "href": "https://api.teamsnap.com/v3/pay_invoice_details",
+        "deprecated": false
+      },
+      {
+        "rel": "payment_method_wepay_credit_cards",
+        "href": "https://api.teamsnap.com/v3/payment_method_wepay_credit_cards",
+        "deprecated": false
+      },
+      {
+        "rel": "payment_notes",
+        "href": "https://api.teamsnap.com/v3/payment_notes",
+        "deprecated": false
+      },
+      {
+        "rel": "payment_options",
+        "href": "https://api.teamsnap.com/v3/payment_options",
+        "deprecated": false
+      },
+      {
+        "rel": "payment_providers",
+        "href": "https://api.teamsnap.com/v3/payment_providers",
+        "deprecated": false
+      },
+      {
+        "rel": "paypal_currencies",
+        "href": "https://api.teamsnap.com/v3/paypal_currencies",
+        "deprecated": false
+      },
+      {
+        "rel": "plans",
+        "href": "https://api.teamsnap.com/v3/plans",
+        "deprecated": false
+      },
+      {
+        "rel": "plans_all",
+        "href": "https://api.teamsnap.com/v3/plans/all",
+        "deprecated": false
+      },
+      {
+        "rel": "program_members",
+        "href": "https://api.teamsnap.com/v3/program_members",
+        "deprecated": false
+      },
+      {
+        "rel": "program_memberships",
+        "href": "https://api.teamsnap.com/v3/program_memberships",
+        "deprecated": false
+      },
+      {
+        "rel": "promotion_exclusions",
+        "href": "https://api.teamsnap.com/v3/promotion_exclusions",
+        "deprecated": false
+      },
+      {
+        "rel": "public_features",
+        "href": "https://api.teamsnap.com/v3/public_features",
+        "deprecated": false
+      },
+      {
+        "rel": "registration_signups",
+        "href": "https://api.teamsnap.com/v3/registration_signups",
+        "deprecated": false
+      },
+      {
+        "rel": "registration_signup_statuses",
+        "href": "https://api.teamsnap.com/v3/registration_signup_statuses",
+        "deprecated": false
+      },
+      {
+        "rel": "registration_forms",
+        "href": "https://api.teamsnap.com/v3/registration_forms",
+        "deprecated": false
+      },
+      {
+        "rel": "registration_form_line_items",
+        "href": "https://api.teamsnap.com/v3/registration_form_line_items",
+        "deprecated": false
+      },
+      {
+        "rel": "registration_form_line_item_options",
+        "href": "https://api.teamsnap.com/v3/registration_form_line_item_options",
+        "deprecated": false
+      },
+      {
+        "rel": "registration_health_data",
+        "href": "https://api.teamsnap.com/v3/registration_health_data",
+        "deprecated": false
+      },
+      {
+        "rel": "registration_dates_aggregates",
+        "href": "https://api.teamsnap.com/v3/registration_dates_aggregates",
+        "deprecated": false
+      },
+      {
+        "rel": "reigning_champs",
+        "href": "https://api.teamsnap.com/v3/reigning_champs",
+        "deprecated": false
+      },
+      {
+        "rel": "schemas",
+        "href": "https://api.teamsnap.com/v3/schemas",
+        "deprecated": false
+      },
+      {
+        "rel": "sms_gateways",
+        "href": "https://api.teamsnap.com/v3/sms_gateways",
+        "deprecated": false
+      },
+      {
+        "rel": "sponsors",
+        "href": "https://api.teamsnap.com/v3/sponsors",
+        "deprecated": false
+      },
+      {
+        "rel": "sports",
+        "href": "https://api.teamsnap.com/v3/sports",
+        "deprecated": false
+      },
+      {
+        "rel": "sport_positions",
+        "href": "https://api.teamsnap.com/v3/sport_positions",
+        "deprecated": false
+      },
+      {
+        "rel": "statistics",
+        "href": "https://api.teamsnap.com/v3/statistics",
+        "deprecated": false
+      },
+      {
+        "rel": "statistic_aggregates",
+        "href": "https://api.teamsnap.com/v3/statistic_aggregates",
+        "deprecated": false
+      },
+      {
+        "rel": "statistic_data",
+        "href": "https://api.teamsnap.com/v3/statistic_data",
+        "deprecated": false
+      },
+      {
+        "rel": "statistic_groups",
+        "href": "https://api.teamsnap.com/v3/statistic_groups",
+        "deprecated": false
+      },
+      {
+        "rel": "stripe_accounts",
+        "href": "https://api.teamsnap.com/v3/stripe_accounts",
+        "deprecated": false
+      },
+      {
+        "rel": "stripe_account_access_grants",
+        "href": "https://api.teamsnap.com/v3/stripe_account_access_grants",
+        "deprecated": false
+      },
+      {
+        "rel": "stripe_identities",
+        "href": "https://api.teamsnap.com/v3/stripe_identities",
+        "deprecated": false
+      },
+      {
+        "rel": "suggested_assignments",
+        "href": "https://api.teamsnap.com/v3/suggested_assignments",
+        "deprecated": false
+      },
+      {
+        "rel": "team_chat_users",
+        "href": "https://api.teamsnap.com/v3/team_chat_users",
+        "deprecated": false
+      },
+      {
+        "rel": "team_fees",
+        "href": "https://api.teamsnap.com/v3/team_fees",
+        "deprecated": false
+      },
+      {
+        "rel": "team_media",
+        "href": "https://api.teamsnap.com/v3/team_media",
+        "deprecated": false
+      },
+      {
+        "rel": "team_medium_comments",
+        "href": "https://api.teamsnap.com/v3/team_medium_comments",
+        "deprecated": false
+      },
+      {
+        "rel": "team_media_groups",
+        "href": "https://api.teamsnap.com/v3/team_media_groups",
+        "deprecated": false
+      },
+      {
+        "rel": "team_names",
+        "href": "https://api.teamsnap.com/v3/team_names",
+        "deprecated": false
+      },
+      {
+        "rel": "team_photos",
+        "href": "https://api.teamsnap.com/v3/team_photos",
+        "deprecated": false
+      },
+      {
+        "rel": "team_public_sites",
+        "href": "https://api.teamsnap.com/v3/team_public_sites",
+        "deprecated": false
+      },
+      {
+        "rel": "teams",
+        "href": "https://api.teamsnap.com/v3/teams",
+        "deprecated": false
+      },
+      {
+        "rel": "teams_paypal_preferences",
+        "href": "https://api.teamsnap.com/v3/teams_paypal_preferences",
+        "deprecated": false
+      },
+      {
+        "rel": "teams_preferences",
+        "href": "https://api.teamsnap.com/v3/teams_preferences",
+        "deprecated": false
+      },
+      {
+        "rel": "teams_results",
+        "href": "https://api.teamsnap.com/v3/teams_results",
+        "deprecated": false
+      },
+      {
+        "rel": "team_statistics",
+        "href": "https://api.teamsnap.com/v3/team_statistics",
+        "deprecated": false
+      },
+      {
+        "rel": "team_stores",
+        "href": "https://api.teamsnap.com/v3/team_stores",
+        "deprecated": false
+      },
+      {
+        "rel": "wepay_account_access_grants",
+        "href": "https://api.teamsnap.com/v3/wepay_account_access_grants",
+        "deprecated": false
+      },
+      {
+        "rel": "time_zones",
+        "href": "https://api.teamsnap.com/v3/time_zones",
+        "deprecated": false
+      },
+      {
+        "rel": "tracked_item_statuses",
+        "href": "https://api.teamsnap.com/v3/tracked_item_statuses",
+        "deprecated": false
+      },
+      {
+        "rel": "tracked_items",
+        "href": "https://api.teamsnap.com/v3/tracked_items",
+        "deprecated": false
+      },
+      {
+        "rel": "tsl_metadata",
+        "href": "https://api.teamsnap.com/v3/tsl_metadata",
+        "deprecated": false
+      },
+      {
+        "rel": "tsl_chats",
+        "href": "https://api.teamsnap.com/v3/tsl_chats",
+        "deprecated": false
+      },
+      {
+        "rel": "tsl_photos",
+        "href": "https://api.teamsnap.com/v3/tsl_photos",
+        "deprecated": false
+      },
+      {
+        "rel": "tsl_scores",
+        "href": "https://api.teamsnap.com/v3/tsl_scores",
+        "deprecated": false
+      },
+      {
+        "rel": "user_delete_requests",
+        "href": "https://api.teamsnap.com/v3/user_delete_requests",
+        "deprecated": false
+      },
+      {
+        "rel": "user_team_experiences",
+        "href": "https://api.teamsnap.com/v3/user_team_experiences",
+        "deprecated": false
+      },
+      {
+        "rel": "users",
+        "href": "https://api.teamsnap.com/v3/users",
+        "deprecated": false
+      },
+      {
+        "rel": "wepay_accounts",
+        "href": "https://api.teamsnap.com/v3/wepay_accounts",
+        "deprecated": false
+      },
+      {
+        "rel": "wepay_invoice_payment_details",
+        "href": "https://api.teamsnap.com/v3/wepay_invoice_payment_details",
+        "deprecated": false
+      },
+      {
+        "rel": "dude",
+        "href": "https://api.teamsnap.com/v3/dude",
+        "deprecated": false
+      },
+      {
+        "rel": "sweet",
+        "href": "https://api.teamsnap.com/v3/sweet",
+        "deprecated": false
+      },
+      {
+        "rel": "random",
+        "href": "https://api.teamsnap.com/v3/random",
+        "deprecated": false
+      },
+      {
+        "rel": "xyzzy",
+        "href": "https://api.teamsnap.com/v3/xyzzy",
+        "deprecated": false
+      },
+      {
+        "rel": "root",
+        "href": "https://api.teamsnap.com/v3/",
+        "deprecated": false
+      },
+      {
+        "rel": "self",
+        "href": "https://api.teamsnap.com/v3/",
+        "deprecated": false
+      }
+    ],
+    "queries": [
+      {
+        "rel": "bulk_load",
+        "href": "https://api.teamsnap.com/v3/bulk_load"
+      },
+      {
+        "rel": "query",
+        "href": "https://api.teamsnap.com/v3/q"
+      },
+      {
+        "rel": "me",
+        "href": "https://api.teamsnap.com/v3/me"
+      },
+      {
+        "rel": "feature",
+        "href": "https://api.teamsnap.com/v3/feature"
+      },
+      {
+        "rel": "partners_preferences",
+        "href": "https://api.teamsnap.com/v3/partners_preferences/search"
+      },
+      {
+        "rel": "partners_user_preferences",
+        "href": "https://api.teamsnap.com/v3/partners_user_preferences/search"
+      },
+      {
+        "rel": "forecast",
+        "href": "https://api.teamsnap.com/v3/forecasts/search"
+      },
+      {
+        "rel": "geocode",
+        "href": "https://api.teamsnap.com/v3/geocoded_locations/search"
+      },
+      {
+        "rel": "generate_firebase_token",
+        "href": "https://api.teamsnap.com/v3/generate_firebase_token"
+      },
+      {
+        "rel": "invitation_finder",
+        "href": "https://api.teamsnap.com/v3/invitation_finder"
+      },
+      {
+        "rel": "messaging_permissions",
+        "href": "https://api.teamsnap.com/v3/messaging_permissions"
+      }
+    ],
+    "commands": [
+      {
+        "rel": "send_invitations",
+        "href": "https://api.teamsnap.com/v3/send_invitations",
+        "method": null
+      },
+      {
+        "rel": "welcome",
+        "href": "https://api.teamsnap.com/v3/welcome",
+        "method": null
+      },
+      {
+        "rel": "initiate_registration",
+        "href": "https://api.teamsnap.com/v3/initiate_registration",
+        "method": null
+      }
+    ]
+  },
+  "deprecated_count": 0,
+  "deprecated_endpoints": [],
+  "total_links": 171,
+  "total_queries": 11,
+  "total_commands": 3
+}

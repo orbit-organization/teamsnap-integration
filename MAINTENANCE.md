@@ -156,39 +156,140 @@ Then tests run automatically in CI on every PR.
 
 ## Monitoring API Changes
 
-### TeamSnap API Updates
+**Important:** TeamSnap does not publish a public API changelog. You must monitor API changes proactively.
 
-The TeamSnap API may change over time:
+### Automated API Monitoring (Enabled)
 
-1. **Monitor:** Check https://api.teamsnap.com/v3/ periodically
-2. **Version:** API version is in responses: `"version": "3.867.0"`
-3. **Deprecations:** Watch for deprecation warnings in API responses
+**GitHub Actions Workflow:** `.github/workflows/monitor-api.yml`
+- **When:** Every Monday at 10am UTC
+- **What:** Checks for API version changes, new/removed endpoints, deprecations
+- **Action:** Creates GitHub issue if changes detected
 
-### Check API Compatibility
+### Manual API Monitoring
+
+#### Check Current API State
 
 ```bash
-# Run the API explorer to see current endpoints
+# View current API version and endpoints
+uv run python monitor_api.py
+
+# Show all deprecated endpoints
+uv run python monitor_api.py --show-deprecations
+```
+
+#### Compare with Previous State
+
+```bash
+# Compare current API with previous snapshot
+uv run python monitor_api.py --compare
+```
+
+#### Save API Snapshot
+
+```bash
+# Manually save current API state
+uv run python monitor_api.py --save
+```
+
+### Automatic Deprecation Warnings
+
+The client automatically logs deprecation warnings:
+
+```python
+from teamsnap_client import TeamSnapClient
+import logging
+
+# Enable logging to see deprecation warnings
+logging.basicConfig(level=logging.WARNING)
+
+client = TeamSnapClient()
+# Deprecation warnings will be logged automatically
+```
+
+### API Version Tracking
+
+Check API version programmatically:
+
+```python
+client = TeamSnapClient()
+print(f"API Version: {client.get_api_version()}")
+```
+
+### Subscribe to Status Updates
+
+TeamSnap Status Page (operational incidents only):
+- **RSS Feed:** https://status.teamsnap.com/history.rss
+- **Atom Feed:** https://status.teamsnap.com/history.atom
+- **Email:** Subscribe at https://status.teamsnap.com
+
+### Check for API Changes
+
+```bash
+# Explore all available endpoints
 uv run python explore_api.py
+
+# View all team data (tests API access)
+uv run python view_all_data.py
 ```
 
 If endpoints are missing or changed, update `teamsnap_client.py`.
+
+### What to Watch For
+
+**Version Changes:**
+- Major version changes (v3 → v4) require code updates
+- Minor version changes (3.867.0 → 3.868.0) usually backward compatible
+
+**Deprecation Warnings:**
+- Take action when you see deprecation warnings
+- Plan migration to replacement endpoints
+- Monitor removal timeline
+
+**New Endpoints:**
+- May provide new functionality
+- Consider adding to `teamsnap_client.py`
+
+**Removed Endpoints:**
+- Breaking change - immediate action required
+- Update code to use replacement endpoints
+
+### API Snapshot History
+
+All API snapshots are stored in `api_snapshots/` directory:
+- `latest.json` - Most recent API state
+- `snapshot_YYYYMMDD_HHMMSS.json` - Historical snapshots
+
+View snapshots:
+
+```bash
+# View latest snapshot
+cat api_snapshots/latest.json | jq
+
+# Compare two snapshots
+diff api_snapshots/snapshot_20240101_120000.json api_snapshots/latest.json
+```
 
 ## Maintenance Schedule
 
 ### Weekly (Automated)
 - ✅ Dependabot checks for updates
 - ✅ GitHub Actions creates update PRs
+- ✅ **API monitoring checks for changes**
+- ✅ **API snapshots saved automatically**
 
 ### Monthly (Manual)
 - 🔍 Review and merge pending update PRs
 - 🔍 Check for new Python versions
 - 🔍 Review GitHub security alerts
+- 🔍 **Review API monitoring issues (if any)**
+- 🔍 **Check for deprecation warnings**
 
 ### Quarterly (Manual)
 - 🔍 Run API explorer to check for new endpoints
 - 🔍 Update Python version if needed
 - 🔍 Review and update documentation
-- 🔍 Check TeamSnap API changelog
+- 🔍 **Manually test API integration**
+- 🔍 **Review API snapshot history**
 
 ### Yearly (Manual)
 - 🔍 Drop support for EOL Python versions

@@ -285,6 +285,7 @@ This project includes automated tools to keep dependencies up-to-date:
 - **Dependabot:** Automatically creates PRs for dependency updates every Monday
 - **GitHub Actions:** Weekly automated dependency checks and testing
 - **Security Scanning:** Automatic vulnerability detection
+- **API Monitoring:** Weekly checks for TeamSnap API changes
 
 ### Manual Updates
 
@@ -298,6 +299,27 @@ uv add requests --upgrade
 # Check for security issues
 uv run safety check
 ```
+
+### API Monitoring
+
+The client automatically tracks API version and deprecation warnings:
+
+```bash
+# Monitor current API state
+uv run python monitor_api.py
+
+# Compare with previous state
+uv run python monitor_api.py --compare
+
+# Check for deprecations
+uv run python monitor_api.py --show-deprecations
+```
+
+**Automatic Features:**
+- Logs API version on client initialization
+- Detects deprecation warnings in responses
+- Weekly automated monitoring via GitHub Actions
+- Creates issues when API changes detected
 
 ### Testing
 

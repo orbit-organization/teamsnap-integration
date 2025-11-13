@@ -1,0 +1,98 @@
+name: Monitor TeamSnap API
+
+on:
+  schedule:
+    # Run every Monday at 10am UTC (after dependency updates)
+    - cron: '0 10 * * 1'
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  monitor-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history to see previous snapshots
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Check API status
+        id: monitor
+        run: |
+          # Run monitoring and capture output
+          echo "## TeamSnap API Monitoring Report" > report.md
+          echo "" >> report.md
+          echo "**Date:** $(date)" >> report.md
+          echo "" >> report.md
+
+          # Run monitor with comparison
+          uv run python monitor_api.py --compare 2>&1 | tee monitor_output.txt
+
+          # Check if there were changes
+          if grep -q "VERSION CHANGE DETECTED\|NEW ENDPOINTS\|REMOVED ENDPOINTS\|NEWLY DEPRECATED" monitor_output.txt; then
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+            echo "" >> report.md
+            echo "### ⚠️ Changes Detected" >> report.md
+            echo "" >> report.md
+            echo '```' >> report.md
+            cat monitor_output.txt >> report.md
+            echo '```' >> report.md
+          else
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+            echo "" >> report.md
+            echo "### ✅ No Changes Detected" >> report.md
+            echo "" >> report.md
+            echo "The API appears stable since the last check." >> report.md
+          fi
+
+      - name: Commit snapshot
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Add new snapshots
+          git add api_snapshots/
+
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No snapshot changes to commit"
+          else
+            git commit -m "chore: update API snapshot [skip ci]"
+            git push
+          fi
+
+      - name: Create issue if changes detected
+        if: steps.monitor.outputs.changes_detected == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('report.md', 'utf8');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🔔 TeamSnap API Changes Detected',
+              body: report + '\n\n---\n\n**Action Required:**\n- Review the changes above\n- Test the integration: `uv run python example.py`\n- Update code if needed\n- Close this issue when resolved',
+              labels: ['api-change', 'automated']
+            });
+
+      - name: Comment on success
+        if: steps.monitor.outputs.changes_detected == 'false'
+        run: |
+          echo "✅ API monitoring completed successfully - no changes detected"

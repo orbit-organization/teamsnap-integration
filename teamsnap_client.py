@@ -6,8 +6,12 @@ Handles authentication and provides methods for common API operations.
 """
 
 import requests
+import logging
 from typing import Optional, Dict, List, Any
 from teamsnap_auth import TeamSnapAuth
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 
 class TeamSnapClient:
@@ -15,16 +19,19 @@ class TeamSnapClient:
 
     BASE_URL = "https://api.teamsnap.com/v3"
 
-    def __init__(self, config_file='config.ini', auto_authenticate=True):
+    def __init__(self, config_file='config.ini', auto_authenticate=True, monitor_deprecations=True):
         """
         Initialize TeamSnap API client
 
         Args:
             config_file: Path to configuration file
             auto_authenticate: Automatically authenticate if no valid token exists
+            monitor_deprecations: Log deprecation warnings from API responses
         """
         self.auth = TeamSnapAuth(config_file)
         self.session = requests.Session()
+        self.api_version = None
+        self.monitor_deprecations = monitor_deprecations
 
         # Check if we need to authenticate
         if not self.auth.is_token_valid():
@@ -40,6 +47,9 @@ class TeamSnapClient:
             'Authorization': f'Bearer {access_token}',
             'Content-Type': 'application/json'
         })
+
+        # Check and log API version
+        self._check_api_version()
 
     def _request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
         """
@@ -76,7 +86,13 @@ class TeamSnapClient:
             JSON response as dictionary
         """
         response = self._request('GET', endpoint, params=params)
-        return response.json()
+        json_response = response.json()
+
+        # Check for deprecations if monitoring is enabled
+        if self.monitor_deprecations:
+            self._check_deprecations(json_response)
+
+        return json_response
 
     def post(self, endpoint: str, data: Optional[Dict] = None) -> Dict[str, Any]:
         """
@@ -118,6 +134,87 @@ class TeamSnapClient:
         """
         response = self._request('DELETE', endpoint)
         return response.json() if response.text else {}
+
+    # API Monitoring Methods
+
+    def _check_api_version(self):
+        """
+        Check current API version and log if changed
+
+        This method is called automatically on client initialization.
+        """
+        try:
+            root = self.get_root()
+            current_version = root.get('collection', {}).get('version')
+
+            if current_version:
+                if self.api_version and current_version != self.api_version:
+                    logger.warning(f"🔄 API version changed: {self.api_version} -> {current_version}")
+                    print(f"⚠️  TeamSnap API version changed: {self.api_version} -> {current_version}")
+
+                self.api_version = current_version
+                logger.info(f"TeamSnap API version: {self.api_version}")
+            else:
+                logger.warning("Could not determine API version from root endpoint")
+        except Exception as e:
+            logger.error(f"Failed to check API version: {e}")
+
+    def _check_deprecations(self, response: Dict[str, Any]):
+        """
+        Monitor API responses for deprecation warnings
+
+        Args:
+            response: JSON response from API
+
+        This method automatically checks for deprecated endpoints and logs warnings.
+        """
+        if not isinstance(response, dict) or 'collection' not in response:
+            return
+
+        links = response.get('collection', {}).get('links', [])
+        for link in links:
+            if link.get('deprecated'):
+                rel = link.get('rel', 'unknown')
+                prompt = link.get('prompt', 'No description provided')
+                logger.warning(f"⚠️  DEPRECATED: {rel} - {prompt}")
+
+    def get_api_version(self) -> Optional[str]:
+        """
+        Get the current API version
+
+        Returns:
+            API version string (e.g., "3.867.0") or None if unavailable
+        """
+        return self.api_version
+
+    def check_for_deprecations(self, endpoint: str = '/') -> List[Dict[str, Any]]:
+        """
+        Manually check a specific endpoint for deprecation warnings
+
+        Args:
+            endpoint: API endpoint to check (default: root)
+
+        Returns:
+            List of deprecated items with their details
+        """
+        try:
+            response = self.get(endpoint)
+            deprecated_items = []
+
+            if isinstance(response, dict) and 'collection' in response:
+                links = response.get('collection', {}).get('links', [])
+                for link in links:
+                    if link.get('deprecated'):
+                        deprecated_items.append({
+                            'rel': link.get('rel'),
+                            'prompt': link.get('prompt'),
+                            'href': link.get('href')
+                        })
+
+            return deprecated_items
+        except Exception as e:
+            logger.error(f"Error checking for deprecations: {e}")
+            return []
 
     # Convenience methods for common operations
 
