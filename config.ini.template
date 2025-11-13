@@ -1,0 +1,15 @@
+[teamsnap]
+# Get these credentials from https://auth.teamsnap.com/oauth/applications/YOUR_APP_ID
+client_id = YOUR_CLIENT_ID_HERE
+client_secret = YOUR_CLIENT_SECRET_HERE
+
+# OAuth callback configuration
+# For local testing, TeamSnap requires out-of-band (OOB) flow
+# Use this exact value: urn:ietf:wg:oauth:2.0:oob
+redirect_uri = urn:ietf:wg:oauth:2.0:oob
+
+# The following will be auto-generated during authentication
+# Do not manually edit these values
+access_token =
+refresh_token =
+token_expires_at =

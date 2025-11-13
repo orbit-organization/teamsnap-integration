@@ -1,0 +1,294 @@
+"""
+TeamSnap API Client
+
+A Python client for interacting with the TeamSnap API v3.
+Handles authentication and provides methods for common API operations.
+"""
+
+import requests
+from typing import Optional, Dict, List, Any
+from teamsnap_auth import TeamSnapAuth
+
+
+class TeamSnapClient:
+    """Client for TeamSnap API v3"""
+
+    BASE_URL = "https://api.teamsnap.com/v3"
+
+    def __init__(self, config_file='config.ini', auto_authenticate=True):
+        """
+        Initialize TeamSnap API client
+
+        Args:
+            config_file: Path to configuration file
+            auto_authenticate: Automatically authenticate if no valid token exists
+        """
+        self.auth = TeamSnapAuth(config_file)
+        self.session = requests.Session()
+
+        # Check if we need to authenticate
+        if not self.auth.is_token_valid():
+            if auto_authenticate:
+                print("⚠️  No valid access token found. Starting authentication...")
+                self.auth.authenticate()
+            else:
+                raise Exception("No valid access token. Please authenticate first.")
+
+        # Set up session headers
+        access_token = self.auth.get_access_token()
+        self.session.headers.update({
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        })
+
+    def _request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
+        """
+        Make an API request
+
+        Args:
+            method: HTTP method (GET, POST, PUT, DELETE, etc.)
+            endpoint: API endpoint (without base URL)
+            **kwargs: Additional arguments to pass to requests
+
+        Returns:
+            Response object
+        """
+        url = f"{self.BASE_URL}/{endpoint.lstrip('/')}"
+
+        try:
+            response = self.session.request(method, url, **kwargs)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.HTTPError as e:
+            print(f"❌ API Error: {e}")
+            print(f"   Response: {response.text}")
+            raise
+
+    def get(self, endpoint: str, params: Optional[Dict] = None) -> Dict[str, Any]:
+        """
+        Make a GET request
+
+        Args:
+            endpoint: API endpoint
+            params: Query parameters
+
+        Returns:
+            JSON response as dictionary
+        """
+        response = self._request('GET', endpoint, params=params)
+        return response.json()
+
+    def post(self, endpoint: str, data: Optional[Dict] = None) -> Dict[str, Any]:
+        """
+        Make a POST request
+
+        Args:
+            endpoint: API endpoint
+            data: Request body data
+
+        Returns:
+            JSON response as dictionary
+        """
+        response = self._request('POST', endpoint, json=data)
+        return response.json()
+
+    def put(self, endpoint: str, data: Optional[Dict] = None) -> Dict[str, Any]:
+        """
+        Make a PUT request
+
+        Args:
+            endpoint: API endpoint
+            data: Request body data
+
+        Returns:
+            JSON response as dictionary
+        """
+        response = self._request('PUT', endpoint, json=data)
+        return response.json()
+
+    def delete(self, endpoint: str) -> Dict[str, Any]:
+        """
+        Make a DELETE request
+
+        Args:
+            endpoint: API endpoint
+
+        Returns:
+            JSON response as dictionary
+        """
+        response = self._request('DELETE', endpoint)
+        return response.json() if response.text else {}
+
+    # Convenience methods for common operations
+
+    def get_me(self) -> Dict[str, Any]:
+        """
+        Get information about the authenticated user
+
+        Returns:
+            User data dictionary
+        """
+        return self.get('/me')
+
+    def get_user(self, user_id: int) -> Dict[str, Any]:
+        """
+        Get information about a specific user
+
+        Args:
+            user_id: User ID
+
+        Returns:
+            User data dictionary
+        """
+        return self.get(f'/users/{user_id}')
+
+    def search_teams(self, user_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for teams
+
+        Args:
+            user_id: Filter teams by user ID
+
+        Returns:
+            List of team dictionaries
+        """
+        params = {}
+        if user_id:
+            params['user_id'] = user_id
+
+        response = self.get('/teams/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
+    def get_team(self, team_id: int) -> Dict[str, Any]:
+        """
+        Get information about a specific team
+
+        Args:
+            team_id: Team ID
+
+        Returns:
+            Team data dictionary
+        """
+        return self.get(f'/teams/{team_id}')
+
+    def search_members(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for team members
+
+        Args:
+            team_id: Filter members by team ID
+
+        Returns:
+            List of member dictionaries
+        """
+        params = {}
+        if team_id:
+            params['team_id'] = team_id
+
+        response = self.get('/members/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
+    def search_events(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for events
+
+        Args:
+            team_id: Filter events by team ID
+
+        Returns:
+            List of event dictionaries
+        """
+        params = {}
+        if team_id:
+            params['team_id'] = team_id
+
+        response = self.get('/events/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
+    def get_event(self, event_id: int) -> Dict[str, Any]:
+        """
+        Get information about a specific event
+
+        Args:
+            event_id: Event ID
+
+        Returns:
+            Event data dictionary
+        """
+        return self.get(f'/events/{event_id}')
+
+    def search_opponents(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for opponents
+
+        Args:
+            team_id: Filter opponents by team ID
+
+        Returns:
+            List of opponent dictionaries
+        """
+        params = {}
+        if team_id:
+            params['team_id'] = team_id
+
+        response = self.get('/opponents/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
+    def search_locations(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Search for locations
+
+        Args:
+            team_id: Filter locations by team ID
+
+        Returns:
+            List of location dictionaries
+        """
+        params = {}
+        if team_id:
+            params['team_id'] = team_id
+
+        response = self.get('/locations/search', params=params)
+        return response.get('collection', {}).get('items', [])
+
+    def get_root(self) -> Dict[str, Any]:
+        """
+        Get API root information (available endpoints and links)
+
+        Returns:
+            Root API data with links to available resources
+        """
+        return self.get('/')
+
+    def custom_request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
+        """
+        Make a custom API request for endpoints not covered by convenience methods
+
+        Args:
+            method: HTTP method
+            endpoint: API endpoint
+            **kwargs: Additional request arguments
+
+        Returns:
+            JSON response as dictionary
+        """
+        response = self._request(method, endpoint, **kwargs)
+        return response.json() if response.text else {}
+
+
+if __name__ == '__main__':
+    """Simple test of the client"""
+    try:
+        # Initialize client
+        client = TeamSnapClient()
+
+        # Get current user info
+        print("\n📋 Getting user information...")
+        me = client.get_me()
+
+        print(f"\n✓ Successfully connected to TeamSnap API!")
+        print(f"   User data keys: {list(me.keys())}")
+
+    except Exception as e:
+        print(f"\n❌ Error: {e}\n")
+        exit(1)
