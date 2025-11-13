@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Check code can import
+        run: |
+          uv run python -c "from teamsnap_client import TeamSnapClient; print('✓ Import successful')"
+          uv run python -c "from teamsnap_auth import TeamSnapAuth; print('✓ Auth import successful')"
+
+      - name: Run tests
+        run: |
+          uv run pytest tests/ -v
+
+      - name: Check code formatting (optional)
+        run: |
+          # TODO: Add formatters like ruff or black
+          echo "✓ No formatters configured yet"
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Check Python syntax
+        run: |
+          uv run python -m py_compile *.py
+          echo "✓ Python syntax check passed"

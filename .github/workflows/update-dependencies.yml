@@ -1,0 +1,66 @@
+name: Update Dependencies
+
+on:
+  schedule:
+    # Run every Monday at 9am UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Update dependencies
+        run: |
+          # Update all dependencies to latest compatible versions
+          uv sync --upgrade
+
+      - name: Run tests
+        run: |
+          uv run pytest tests/ -v
+
+      - name: Check if uv.lock changed
+        id: check-changes
+        run: |
+          if git diff --quiet uv.lock; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.check-changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update Python dependencies"
+          title: "🔄 Update Python Dependencies"
+          body: |
+            ## Automated Dependency Update
+
+            This PR updates Python dependencies to their latest compatible versions.
+
+            ### Changes
+            - Updated `uv.lock` with latest dependency versions
+
+            ### Next Steps
+            - Review the changes
+            - Test locally: `uv sync && uv run python example.py`
+            - Merge if everything works
+
+            ---
+            *This PR was automatically created by GitHub Actions*
+          branch: automated/update-dependencies
+          delete-branch: true

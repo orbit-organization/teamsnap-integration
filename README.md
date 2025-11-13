@@ -276,6 +276,41 @@ auth_url = self.get_authorization_url(scope='read')  # Read-only
 
 Available scopes: `read`, `write`, `read write`
 
+## Maintenance & Updates
+
+This project includes automated tools to keep dependencies up-to-date:
+
+### Automated Updates
+
+- **Dependabot:** Automatically creates PRs for dependency updates every Monday
+- **GitHub Actions:** Weekly automated dependency checks and testing
+- **Security Scanning:** Automatic vulnerability detection
+
+### Manual Updates
+
+```bash
+# Update all dependencies
+uv sync --upgrade
+
+# Update specific package
+uv add requests --upgrade
+
+# Check for security issues
+uv run safety check
+```
+
+### Testing
+
+```bash
+# Run the test suite
+uv run pytest tests/ -v
+
+# Test the integration manually
+uv run python example.py
+```
+
+For detailed maintenance procedures, see [MAINTENANCE.md](MAINTENANCE.md).
+
 ## API Documentation
 
 - TeamSnap API v3: https://api.teamsnap.com/v3/
