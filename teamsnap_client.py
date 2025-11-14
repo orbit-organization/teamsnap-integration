@@ -19,7 +19,12 @@ class TeamSnapClient:
 
     BASE_URL = "https://api.teamsnap.com/v3"
 
-    def __init__(self, config_file='config.ini', auto_authenticate=True, monitor_deprecations=True):
+    def __init__(
+        self,
+        config_file="config.ini",
+        auto_authenticate=True,
+        monitor_deprecations=True,
+    ):
         """
         Initialize TeamSnap API client
 
@@ -43,10 +48,12 @@ class TeamSnapClient:
 
         # Set up session headers
         access_token = self.auth.get_access_token()
-        self.session.headers.update({
-            'Authorization': f'Bearer {access_token}',
-            'Content-Type': 'application/json'
-        })
+        self.session.headers.update(
+            {
+                "Authorization": f"Bearer {access_token}",
+                "Content-Type": "application/json",
+            }
+        )
 
         # Check and log API version
         self._check_api_version()
@@ -85,7 +92,7 @@ class TeamSnapClient:
         Returns:
             JSON response as dictionary
         """
-        response = self._request('GET', endpoint, params=params)
+        response = self._request("GET", endpoint, params=params)
         json_response = response.json()
 
         # Check for deprecations if monitoring is enabled
@@ -105,7 +112,7 @@ class TeamSnapClient:
         Returns:
             JSON response as dictionary
         """
-        response = self._request('POST', endpoint, json=data)
+        response = self._request("POST", endpoint, json=data)
         return response.json()
 
     def put(self, endpoint: str, data: Optional[Dict] = None) -> Dict[str, Any]:
@@ -119,7 +126,7 @@ class TeamSnapClient:
         Returns:
             JSON response as dictionary
         """
-        response = self._request('PUT', endpoint, json=data)
+        response = self._request("PUT", endpoint, json=data)
         return response.json()
 
     def delete(self, endpoint: str) -> Dict[str, Any]:
@@ -132,7 +139,7 @@ class TeamSnapClient:
         Returns:
             JSON response as dictionary
         """
-        response = self._request('DELETE', endpoint)
+        response = self._request("DELETE", endpoint)
         return response.json() if response.text else {}
 
     # API Monitoring Methods
@@ -145,12 +152,16 @@ class TeamSnapClient:
         """
         try:
             root = self.get_root()
-            current_version = root.get('collection', {}).get('version')
+            current_version = root.get("collection", {}).get("version")
 
             if current_version:
                 if self.api_version and current_version != self.api_version:
-                    logger.warning(f"🔄 API version changed: {self.api_version} -> {current_version}")
-                    print(f"⚠️  TeamSnap API version changed: {self.api_version} -> {current_version}")
+                    logger.warning(
+                        f"🔄 API version changed: {self.api_version} -> {current_version}"
+                    )
+                    print(
+                        f"⚠️  TeamSnap API version changed: {self.api_version} -> {current_version}"
+                    )
 
                 self.api_version = current_version
                 logger.info(f"TeamSnap API version: {self.api_version}")
@@ -168,14 +179,14 @@ class TeamSnapClient:
 
         This method automatically checks for deprecated endpoints and logs warnings.
         """
-        if not isinstance(response, dict) or 'collection' not in response:
+        if not isinstance(response, dict) or "collection" not in response:
             return
 
-        links = response.get('collection', {}).get('links', [])
+        links = response.get("collection", {}).get("links", [])
         for link in links:
-            if link.get('deprecated'):
-                rel = link.get('rel', 'unknown')
-                prompt = link.get('prompt', 'No description provided')
+            if link.get("deprecated"):
+                rel = link.get("rel", "unknown")
+                prompt = link.get("prompt", "No description provided")
                 logger.warning(f"⚠️  DEPRECATED: {rel} - {prompt}")
 
     def get_api_version(self) -> Optional[str]:
@@ -187,7 +198,7 @@ class TeamSnapClient:
         """
         return self.api_version
 
-    def check_for_deprecations(self, endpoint: str = '/') -> List[Dict[str, Any]]:
+    def check_for_deprecations(self, endpoint: str = "/") -> List[Dict[str, Any]]:
         """
         Manually check a specific endpoint for deprecation warnings
 
@@ -201,15 +212,17 @@ class TeamSnapClient:
             response = self.get(endpoint)
             deprecated_items = []
 
-            if isinstance(response, dict) and 'collection' in response:
-                links = response.get('collection', {}).get('links', [])
+            if isinstance(response, dict) and "collection" in response:
+                links = response.get("collection", {}).get("links", [])
                 for link in links:
-                    if link.get('deprecated'):
-                        deprecated_items.append({
-                            'rel': link.get('rel'),
-                            'prompt': link.get('prompt'),
-                            'href': link.get('href')
-                        })
+                    if link.get("deprecated"):
+                        deprecated_items.append(
+                            {
+                                "rel": link.get("rel"),
+                                "prompt": link.get("prompt"),
+                                "href": link.get("href"),
+                            }
+                        )
 
             return deprecated_items
         except Exception as e:
@@ -225,7 +238,7 @@ class TeamSnapClient:
         Returns:
             User data dictionary
         """
-        return self.get('/me')
+        return self.get("/me")
 
     def get_user(self, user_id: int) -> Dict[str, Any]:
         """
@@ -237,7 +250,7 @@ class TeamSnapClient:
         Returns:
             User data dictionary
         """
-        return self.get(f'/users/{user_id}')
+        return self.get(f"/users/{user_id}")
 
     def search_teams(self, user_id: Optional[int] = None) -> List[Dict[str, Any]]:
         """
@@ -251,10 +264,10 @@ class TeamSnapClient:
         """
         params = {}
         if user_id:
-            params['user_id'] = user_id
+            params["user_id"] = user_id
 
-        response = self.get('/teams/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/teams/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
     def get_team(self, team_id: int) -> Dict[str, Any]:
         """
@@ -266,7 +279,7 @@ class TeamSnapClient:
         Returns:
             Team data dictionary
         """
-        return self.get(f'/teams/{team_id}')
+        return self.get(f"/teams/{team_id}")
 
     def search_members(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
         """
@@ -280,10 +293,10 @@ class TeamSnapClient:
         """
         params = {}
         if team_id:
-            params['team_id'] = team_id
+            params["team_id"] = team_id
 
-        response = self.get('/members/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/members/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
     def search_events(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
         """
@@ -297,10 +310,10 @@ class TeamSnapClient:
         """
         params = {}
         if team_id:
-            params['team_id'] = team_id
+            params["team_id"] = team_id
 
-        response = self.get('/events/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/events/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
     def get_event(self, event_id: int) -> Dict[str, Any]:
         """
@@ -312,7 +325,7 @@ class TeamSnapClient:
         Returns:
             Event data dictionary
         """
-        return self.get(f'/events/{event_id}')
+        return self.get(f"/events/{event_id}")
 
     def search_opponents(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
         """
@@ -326,10 +339,10 @@ class TeamSnapClient:
         """
         params = {}
         if team_id:
-            params['team_id'] = team_id
+            params["team_id"] = team_id
 
-        response = self.get('/opponents/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/opponents/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
     def search_locations(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
         """
@@ -343,12 +356,14 @@ class TeamSnapClient:
         """
         params = {}
         if team_id:
-            params['team_id'] = team_id
+            params["team_id"] = team_id
 
-        response = self.get('/locations/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/locations/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
-    def search_forum_topics(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
+    def search_forum_topics(
+        self, team_id: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
         """
         Search for forum topics (message board topics)
 
@@ -360,12 +375,14 @@ class TeamSnapClient:
         """
         params = {}
         if team_id:
-            params['team_id'] = team_id
+            params["team_id"] = team_id
 
-        response = self.get('/forum_topics/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/forum_topics/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
-    def search_forum_posts(self, team_id: Optional[int] = None, forum_topic_id: Optional[int] = None) -> List[Dict[str, Any]]:
+    def search_forum_posts(
+        self, team_id: Optional[int] = None, forum_topic_id: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
         """
         Search for forum posts (message board posts/replies)
 
@@ -378,14 +395,16 @@ class TeamSnapClient:
         """
         params = {}
         if team_id:
-            params['team_id'] = team_id
+            params["team_id"] = team_id
         if forum_topic_id:
-            params['forum_topic_id'] = forum_topic_id
+            params["forum_topic_id"] = forum_topic_id
 
-        response = self.get('/forum_posts/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/forum_posts/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
-    def search_broadcast_emails(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
+    def search_broadcast_emails(
+        self, team_id: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
         """
         Search for broadcast emails sent to the team
 
@@ -397,10 +416,10 @@ class TeamSnapClient:
         """
         params = {}
         if team_id:
-            params['team_id'] = team_id
+            params["team_id"] = team_id
 
-        response = self.get('/broadcast_emails/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/broadcast_emails/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
     def search_messages(self, team_id: Optional[int] = None) -> List[Dict[str, Any]]:
         """
@@ -414,12 +433,14 @@ class TeamSnapClient:
         """
         params = {}
         if team_id:
-            params['team_id'] = team_id
+            params["team_id"] = team_id
 
-        response = self.get('/messages/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/messages/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
-    def search_assignments(self, team_id: Optional[int] = None, event_id: Optional[int] = None) -> List[Dict[str, Any]]:
+    def search_assignments(
+        self, team_id: Optional[int] = None, event_id: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
         """
         Search for assignments (tasks assigned to members)
 
@@ -432,12 +453,12 @@ class TeamSnapClient:
         """
         params = {}
         if team_id:
-            params['team_id'] = team_id
+            params["team_id"] = team_id
         if event_id:
-            params['event_id'] = event_id
+            params["event_id"] = event_id
 
-        response = self.get('/assignments/search', params=params)
-        return response.get('collection', {}).get('items', [])
+        response = self.get("/assignments/search", params=params)
+        return response.get("collection", {}).get("items", [])
 
     def get_root(self) -> Dict[str, Any]:
         """
@@ -446,7 +467,7 @@ class TeamSnapClient:
         Returns:
             Root API data with links to available resources
         """
-        return self.get('/')
+        return self.get("/")
 
     def custom_request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
         """
@@ -464,7 +485,7 @@ class TeamSnapClient:
         return response.json() if response.text else {}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     """Simple test of the client"""
     try:
         # Initialize client
@@ -474,7 +495,7 @@ if __name__ == '__main__':
         print("\n📋 Getting user information...")
         me = client.get_me()
 
-        print(f"\n✓ Successfully connected to TeamSnap API!")
+        print("\n✓ Successfully connected to TeamSnap API!")
         print(f"   User data keys: {list(me.keys())}")
 
     except Exception as e:

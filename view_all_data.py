@@ -18,18 +18,18 @@ from teamsnap_client import TeamSnapClient
 
 def print_section(title):
     """Print a formatted section header"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print(f" {title}")
-    print("="*70)
+    print("=" * 70)
 
 
 def extract_data(item):
     """Extract data from Collection+JSON format"""
-    data_array = item.get('data', [])
+    data_array = item.get("data", [])
     result = {}
     for field in data_array:
-        name = field.get('name')
-        value = field.get('value')
+        name = field.get("name")
+        value = field.get("value")
         if name:
             result[name] = value
     return result
@@ -45,15 +45,17 @@ def main():
         # Get user info
         print_section("👤 Current User")
         me = client.get_me()
-        user_items = me.get('collection', {}).get('items', [])
+        user_items = me.get("collection", {}).get("items", [])
 
         if user_items:
             user_data = extract_data(user_items[0])
-            print(f"\n  Name: {user_data.get('first_name')} {user_data.get('last_name')}")
+            print(
+                f"\n  Name: {user_data.get('first_name')} {user_data.get('last_name')}"
+            )
             print(f"  Email: {user_data.get('email')}")
             print(f"  User ID: {user_data.get('id')}")
 
-            user_id = int(user_data.get('id'))
+            user_id = int(user_data.get("id"))
 
             # Get teams
             print_section("🏆 Teams")
@@ -62,8 +64,8 @@ def main():
 
             for idx, team_item in enumerate(teams, 1):
                 team_data = extract_data(team_item)
-                team_id = int(team_data.get('id'))
-                team_name = team_data.get('name')
+                team_id = int(team_data.get("id"))
+                team_name = team_data.get("name")
 
                 print(f"\n  Team #{idx}: {team_name} (ID: {team_id})")
                 print(f"    Sport: {team_data.get('sport_name', 'N/A')}")
@@ -76,8 +78,10 @@ def main():
 
                 for member_item in members[:10]:  # Show first 10
                     member_data = extract_data(member_item)
-                    print(f"    • {member_data.get('first_name')} {member_data.get('last_name')}")
-                    if member_data.get('position'):
+                    print(
+                        f"    • {member_data.get('first_name')} {member_data.get('last_name')}"
+                    )
+                    if member_data.get("position"):
                         print(f"      Position: {member_data.get('position')}")
 
                 # Get events
@@ -91,9 +95,11 @@ def main():
                     print(f"      Type: {event_data.get('type', 'N/A')}")
                     print(f"      Date: {event_data.get('start_date', 'N/A')}")
                     print(f"      Location: {event_data.get('location_name', 'N/A')}")
-                    if event_data.get('notes'):
-                        notes = event_data.get('notes')
-                        print(f"      Notes: {notes[:50]}{'...' if len(notes) > 50 else ''}")
+                    if event_data.get("notes"):
+                        notes = event_data.get("notes")
+                        print(
+                            f"      Notes: {notes[:50]}{'...' if len(notes) > 50 else ''}"
+                        )
 
                 # Get forum topics
                 print_section(f"💬 Forum Topics / Message Board - {team_name}")
@@ -102,8 +108,8 @@ def main():
 
                 for topic_item in forum_topics:
                     topic_data = extract_data(topic_item)
-                    topic_id = int(topic_data.get('id'))
-                    is_announcement = topic_data.get('is_announcement')
+                    topic_id = int(topic_data.get("id"))
+                    is_announcement = topic_data.get("is_announcement")
                     announcement_badge = " 📢 ANNOUNCEMENT" if is_announcement else ""
 
                     print(f"\n    📌 {topic_data.get('title')}{announcement_badge}")
@@ -111,15 +117,19 @@ def main():
                     print(f"       Created: {topic_data.get('created_at', 'N/A')}")
 
                     # Get posts for this topic
-                    forum_posts = client.search_forum_posts(team_id=team_id, forum_topic_id=topic_id)
+                    forum_posts = client.search_forum_posts(
+                        team_id=team_id, forum_topic_id=topic_id
+                    )
                     print(f"       Replies: {len(forum_posts)}")
 
                     for post_item in forum_posts[:5]:  # Show first 5 posts
                         post_data = extract_data(post_item)
-                        message = post_data.get('message', '')
-                        poster = post_data.get('poster_name', 'Unknown')
+                        message = post_data.get("message", "")
+                        poster = post_data.get("poster_name", "Unknown")
                         print(f"\n         💬 {poster}:")
-                        print(f"            {message[:100]}{'...' if len(message) > 100 else ''}")
+                        print(
+                            f"            {message[:100]}{'...' if len(message) > 100 else ''}"
+                        )
 
                 # Get broadcast emails
                 print_section(f"📧 Broadcast Emails - {team_name}")
@@ -131,9 +141,11 @@ def main():
                     print(f"\n    📨 {email_data.get('subject', 'No Subject')}")
                     print(f"       From: {email_data.get('sender_email', 'N/A')}")
                     print(f"       Sent: {email_data.get('sent_at', 'Not sent yet')}")
-                    if email_data.get('body'):
-                        body = email_data.get('body', '')
-                        print(f"       Body: {body[:100]}{'...' if len(body) > 100 else ''}")
+                    if email_data.get("body"):
+                        body = email_data.get("body", "")
+                        print(
+                            f"       Body: {body[:100]}{'...' if len(body) > 100 else ''}"
+                        )
 
                 # Get messages
                 print_section(f"💌 Messages - {team_name}")
@@ -153,7 +165,9 @@ def main():
 
                 for assignment_item in assignments[:10]:
                     assignment_data = extract_data(assignment_item)
-                    print(f"\n    ✓ {assignment_data.get('description', 'No description')}")
+                    print(
+                        f"\n    ✓ {assignment_data.get('description', 'No description')}"
+                    )
                     print(f"      Position: {assignment_data.get('position', 'N/A')}")
                     print(f"      Event ID: {assignment_data.get('event_id', 'N/A')}")
                     print(f"      Member ID: {assignment_data.get('member_id', 'N/A')}")
@@ -165,8 +179,9 @@ def main():
     except Exception as e:
         print(f"\n❌ Error: {e}\n")
         import traceback
+
         traceback.print_exc()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

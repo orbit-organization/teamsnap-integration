@@ -15,9 +15,9 @@ from teamsnap_client import TeamSnapClient
 
 def print_section(title):
     """Print a formatted section header"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print(f" {title}")
-    print("="*70)
+    print("=" * 70)
 
 
 def print_json(data, indent=2):
@@ -53,16 +53,16 @@ def main():
         me_response = client.get_me()
 
         # TeamSnap uses Collection+JSON format
-        items = safe_get(me_response, 'collection', 'items', default=[])
+        items = safe_get(me_response, "collection", "items", default=[])
 
         if items:
-            user_data = items[0].get('data', [])
+            user_data = items[0].get("data", [])
 
             # Extract user information from data array
             user_info = {}
             for item in user_data:
-                name = item.get('name')
-                value = item.get('value')
+                name = item.get("name")
+                value = item.get("value")
                 if name and value:
                     user_info[name] = value
 
@@ -73,7 +73,7 @@ def main():
             print(f"   Email: {user_info.get('email', 'N/A')}")
             print(f"   Birthday: {user_info.get('birthday', 'N/A')}")
 
-            user_id = user_info.get('id')
+            user_id = user_info.get("id")
 
             # Get teams for this user
             if user_id:
@@ -83,12 +83,14 @@ def main():
                 print(f"\n✓ Found {len(teams_response)} team(s)")
 
                 if teams_response:
-                    for idx, team_item in enumerate(teams_response[:5], 1):  # Show first 5 teams
-                        team_data = team_item.get('data', [])
+                    for idx, team_item in enumerate(
+                        teams_response[:5], 1
+                    ):  # Show first 5 teams
+                        team_data = team_item.get("data", [])
                         team_info = {}
                         for item in team_data:
-                            name = item.get('name')
-                            value = item.get('value')
+                            name = item.get("name")
+                            value = item.get("value")
                             if name:
                                 team_info[name] = value
 
@@ -96,47 +98,67 @@ def main():
                         print(f"      ID: {team_info.get('id', 'N/A')}")
                         print(f"      Name: {team_info.get('name', 'N/A')}")
                         print(f"      Sport: {team_info.get('sport_name', 'N/A')}")
-                        print(f"      Location: {team_info.get('location_country', 'N/A')}")
-                        print(f"      Division: {team_info.get('division_name', 'N/A')}")
+                        print(
+                            f"      Location: {team_info.get('location_country', 'N/A')}"
+                        )
+                        print(
+                            f"      Division: {team_info.get('division_name', 'N/A')}"
+                        )
 
                         # Get details for first team
-                        if idx == 1 and team_info.get('id'):
-                            team_id = int(team_info['id'])
+                        if idx == 1 and team_info.get("id"):
+                            team_id = int(team_info["id"])
 
                             # Get team members
-                            print_section(f"4. Getting Members for Team: {team_info.get('name')}")
+                            print_section(
+                                f"4. Getting Members for Team: {team_info.get('name')}"
+                            )
                             members_response = client.search_members(team_id=team_id)
 
                             print(f"\n✓ Found {len(members_response)} member(s)")
 
-                            for member_idx, member_item in enumerate(members_response[:5], 1):  # Show first 5
-                                member_data = member_item.get('data', [])
+                            for member_idx, member_item in enumerate(
+                                members_response[:5], 1
+                            ):  # Show first 5
+                                member_data = member_item.get("data", [])
                                 member_info = {}
                                 for item in member_data:
-                                    name = item.get('name')
-                                    value = item.get('value')
+                                    name = item.get("name")
+                                    value = item.get("value")
                                     if name:
                                         member_info[name] = value
 
                                 print(f"\n   Member #{member_idx}:")
                                 print(f"      ID: {member_info.get('id', 'N/A')}")
-                                print(f"      First Name: {member_info.get('first_name', 'N/A')}")
-                                print(f"      Last Name: {member_info.get('last_name', 'N/A')}")
-                                print(f"      Position: {member_info.get('position', 'N/A')}")
-                                print(f"      Jersey Number: {member_info.get('jersey_number', 'N/A')}")
+                                print(
+                                    f"      First Name: {member_info.get('first_name', 'N/A')}"
+                                )
+                                print(
+                                    f"      Last Name: {member_info.get('last_name', 'N/A')}"
+                                )
+                                print(
+                                    f"      Position: {member_info.get('position', 'N/A')}"
+                                )
+                                print(
+                                    f"      Jersey Number: {member_info.get('jersey_number', 'N/A')}"
+                                )
 
                             # Get team events
-                            print_section(f"5. Getting Events for Team: {team_info.get('name')}")
+                            print_section(
+                                f"5. Getting Events for Team: {team_info.get('name')}"
+                            )
                             events_response = client.search_events(team_id=team_id)
 
                             print(f"\n✓ Found {len(events_response)} event(s)")
 
-                            for event_idx, event_item in enumerate(events_response[:5], 1):  # Show first 5
-                                event_data = event_item.get('data', [])
+                            for event_idx, event_item in enumerate(
+                                events_response[:5], 1
+                            ):  # Show first 5
+                                event_data = event_item.get("data", [])
                                 event_info = {}
                                 for item in event_data:
-                                    name = item.get('name')
-                                    value = item.get('value')
+                                    name = item.get("name")
+                                    value = item.get("value")
                                     if name:
                                         event_info[name] = value
 
@@ -144,10 +166,16 @@ def main():
                                 print(f"      ID: {event_info.get('id', 'N/A')}")
                                 print(f"      Name: {event_info.get('name', 'N/A')}")
                                 print(f"      Type: {event_info.get('type', 'N/A')}")
-                                print(f"      Start: {event_info.get('start_date', 'N/A')}")
-                                print(f"      Location: {event_info.get('location_name', 'N/A')}")
-                                notes = event_info.get('notes') or 'N/A'
-                                notes_display = notes[:50] + '...' if len(notes) > 50 else notes
+                                print(
+                                    f"      Start: {event_info.get('start_date', 'N/A')}"
+                                )
+                                print(
+                                    f"      Location: {event_info.get('location_name', 'N/A')}"
+                                )
+                                notes = event_info.get("notes") or "N/A"
+                                notes_display = (
+                                    notes[:50] + "..." if len(notes) > 50 else notes
+                                )
                                 print(f"      Notes: {notes_display}")
 
                 else:
@@ -173,9 +201,10 @@ def main():
     except Exception as e:
         print(f"\n❌ Error: {e}\n")
         import traceback
+
         traceback.print_exc()
         exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

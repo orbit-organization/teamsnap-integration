@@ -36,7 +36,7 @@ uv run python server.py
 
 # Check imports work
 uv run python -c "from client import TeamSnapAsyncClient; print('OK')"
-uv run python -c "from server import app; print('OK')"
+uv run python -c "from server import mcp; print('OK')"
 ```
 
 ### Configuration
@@ -101,7 +101,7 @@ uv run python server.py
 
 ```
 teamsnap_mcp/
-├── server.py              # MCP server with FastMCP (@app.tool() decorators)
+├── server.py              # MCP server with FastMCP (@mcp.tool() decorators)
 ├── client.py              # Async TeamSnap API client (httpx)
 ├── tests/                 # Test suite
 │   ├── conftest.py       # Shared fixtures
@@ -122,7 +122,7 @@ teamsnap_mcp/
 ```
 Claude Desktop
     ↕️ (MCP Protocol via stdio)
-server.py (@app.tool() functions)
+server.py (@mcp.tool() functions)
     ↕️
 client.py (TeamSnapAsyncClient)
     ↕️ (HTTP/JSON)
@@ -132,7 +132,7 @@ TeamSnap API v3
 ### Key Components
 
 **server.py**:
-- FastMCP server using `@app.tool()` decorators
+- FastMCP server using `@mcp.tool()` decorators
 - Each tool returns `list[TextContent]`
 - Tools are async functions
 - Uses context manager pattern for client instances
@@ -157,7 +157,7 @@ TeamSnap API v3
 ### Tool Definition Pattern
 
 ```python
-@app.tool()
+@mcp.tool()
 async def tool_name(param: Type) -> list[TextContent]:
     """
     Tool description that Claude sees.
@@ -227,7 +227,7 @@ async def new_operation(self, param: Type) -> Dict[str, Any]:
 
 2. **Add server tool** to `server.py`:
 ```python
-@app.tool()
+@mcp.tool()
 async def new_tool(param: Type) -> list[TextContent]:
     """Tool description for Claude"""
     async with get_client() as client:
@@ -251,7 +251,7 @@ async def test_new_tool(mock_env):
 ### Debugging Tools
 
 **Tool not appearing in Claude**:
-- Check `@app.tool()` decorator is present
+- Check `@mcp.tool()` decorator is present
 - Verify function signature is correct
 - Check Claude Desktop config path is absolute
 - Restart Claude Desktop completely
@@ -399,7 +399,7 @@ cd teamsnap_mcp
 1. Understand requirement
 2. Check if TeamSnap API supports it (see `../explore_api.py`)
 3. Add async method to `client.py`
-4. Add `@app.tool()` to `server.py`
+4. Add `@mcp.tool()` to `server.py`
 5. Write tests in `tests/`
 6. Update README.md
 7. Test in Claude Desktop
@@ -407,6 +407,6 @@ cd teamsnap_mcp
 
 **Before committing**:
 - ✅ Run tests: `uv run pytest tests/ -v`
-- ✅ Check imports: `uv run python -c "from server import app"`
+- ✅ Check imports: `uv run python -c "from server import mcp"`
 - ✅ Update docs if needed
 - ✅ Verify `.env` not in commit

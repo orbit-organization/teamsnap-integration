@@ -3,8 +3,6 @@ Shared test fixtures for TeamSnap MCP Server tests
 """
 
 import pytest
-import os
-from unittest.mock import AsyncMock, MagicMock
 
 
 @pytest.fixture
@@ -33,10 +31,10 @@ def sample_team_data():
                         {"name": "sport_name", "value": "Soccer"},
                         {"name": "season_name", "value": "Fall 2025"},
                         {"name": "division_name", "value": "Division 1"},
-                        {"name": "location_country", "value": "US"}
+                        {"name": "location_country", "value": "US"},
                     ]
                 }
-            ]
+            ],
         }
     }
 
@@ -54,7 +52,7 @@ def sample_event_data():
                         {"name": "start_date", "value": "2025-01-15T14:00:00Z"},
                         {"name": "is_game", "value": False},
                         {"name": "location_name", "value": "Home Field"},
-                        {"name": "notes", "value": "Bring water"}
+                        {"name": "notes", "value": "Bring water"},
                     ]
                 }
             ]
@@ -76,7 +74,7 @@ def sample_member_data():
                         {"name": "email", "value": "john@example.com"},
                         {"name": "phone", "value": "555-1234"},
                         {"name": "is_manager", "value": False},
-                        {"name": "is_non_player", "value": False}
+                        {"name": "is_non_player", "value": False},
                     ]
                 }
             ]
@@ -90,9 +88,24 @@ def sample_search_results():
     return {
         "collection": {
             "items": [
-                {"data": [{"name": "id", "value": 1}, {"name": "name", "value": "Item 1"}]},
-                {"data": [{"name": "id", "value": 2}, {"name": "name", "value": "Item 2"}]},
-                {"data": [{"name": "id", "value": 3}, {"name": "name", "value": "Item 3"}]}
+                {
+                    "data": [
+                        {"name": "id", "value": 1},
+                        {"name": "name", "value": "Item 1"},
+                    ]
+                },
+                {
+                    "data": [
+                        {"name": "id", "value": 2},
+                        {"name": "name", "value": "Item 2"},
+                    ]
+                },
+                {
+                    "data": [
+                        {"name": "id", "value": 3},
+                        {"name": "name", "value": "Item 3"},
+                    ]
+                },
             ]
         }
     }

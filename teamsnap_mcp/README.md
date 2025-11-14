@@ -304,7 +304,7 @@ The server will listen on stdin/stdout for MCP protocol messages.
 To add a new tool to the server:
 
 1. Add the corresponding method to `client.py` (if needed)
-2. Add a new `@app.tool()` decorated function in `server.py`
+2. Add a new `@mcp.tool()` decorated function in `server.py`
 3. Update this README with the new tool
 4. Add tests in `tests/`
 

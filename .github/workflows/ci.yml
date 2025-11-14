@@ -37,10 +37,11 @@ jobs:
         run: |
           uv run pytest tests/ -v
 
-      - name: Check code formatting (optional)
+      - name: Check code formatting with ruff
         run: |
-          # TODO: Add formatters like ruff or black
-          echo "✓ No formatters configured yet"
+          uv run ruff check . --output-format=github
+          uv run ruff format --check .
+          echo "✓ Ruff checks passed"
 
   lint:
     runs-on: ubuntu-latest
@@ -62,3 +63,8 @@ jobs:
         run: |
           uv run python -m py_compile *.py
           echo "✓ Python syntax check passed"
+
+      - name: Lint with ruff
+        run: |
+          uv run ruff check . --output-format=github
+          echo "✓ Ruff linting passed"
