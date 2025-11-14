@@ -8,9 +8,8 @@ Provides read and write tools for managing teams, events, members, and more.
 import os
 from datetime import datetime
 from typing import Optional
-from mcp.server import Server
-from mcp.types import Tool, TextContent
-import mcp.server.stdio
+from mcp.server.fastmcp import FastMCP
+from mcp.types import TextContent
 from dotenv import load_dotenv
 
 from client import TeamSnapAsyncClient
@@ -19,7 +18,7 @@ from client import TeamSnapAsyncClient
 load_dotenv()
 
 # Create MCP server
-app = Server("teamsnap")
+mcp = FastMCP("TeamSnap")
 
 # Global client instance (will be initialized per request)
 def get_client() -> TeamSnapAsyncClient:
@@ -63,7 +62,7 @@ def check_readonly() -> Optional[list[TextContent]]:
 # READ TOOLS
 # ============================================================================
 
-@app.tool()
+@mcp.tool()
 async def list_teams(user_id: Optional[int] = None) -> list[TextContent]:
     """
     List all teams accessible to the authenticated user.
@@ -94,7 +93,7 @@ async def list_teams(user_id: Optional[int] = None) -> list[TextContent]:
         return [TextContent(type="text", text=result)]
 
 
-@app.tool()
+@mcp.tool()
 async def get_team_details(team_id: int) -> list[TextContent]:
     """
     Get detailed information about a specific team.
@@ -126,7 +125,7 @@ async def get_team_details(team_id: int) -> list[TextContent]:
         return [TextContent(type="text", text=result)]
 
 
-@app.tool()
+@mcp.tool()
 async def list_events(team_id: int) -> list[TextContent]:
     """
     List all events for a team.
@@ -167,7 +166,7 @@ async def list_events(team_id: int) -> list[TextContent]:
         return [TextContent(type="text", text=result)]
 
 
-@app.tool()
+@mcp.tool()
 async def get_event_details(event_id: int) -> list[TextContent]:
     """
     Get detailed information about a specific event.
@@ -204,7 +203,7 @@ async def get_event_details(event_id: int) -> list[TextContent]:
         return [TextContent(type="text", text=result)]
 
 
-@app.tool()
+@mcp.tool()
 async def list_members(team_id: int) -> list[TextContent]:
     """
     List all members of a team.
@@ -244,7 +243,7 @@ async def list_members(team_id: int) -> list[TextContent]:
         return [TextContent(type="text", text=result)]
 
 
-@app.tool()
+@mcp.tool()
 async def get_event_availability(event_id: int) -> list[TextContent]:
     """
     Get member availability responses for a specific event.
@@ -299,7 +298,7 @@ async def get_event_availability(event_id: int) -> list[TextContent]:
         return [TextContent(type="text", text=result)]
 
 
-@app.tool()
+@mcp.tool()
 async def list_assignments(event_id: int) -> list[TextContent]:
     """
     List assignments (tasks) for an event.
@@ -328,7 +327,7 @@ async def list_assignments(event_id: int) -> list[TextContent]:
         return [TextContent(type="text", text=result)]
 
 
-@app.tool()
+@mcp.tool()
 async def list_locations(team_id: int) -> list[TextContent]:
     """
     List all locations for a team.
@@ -366,7 +365,7 @@ async def list_locations(team_id: int) -> list[TextContent]:
 # WRITE TOOLS
 # ============================================================================
 
-@app.tool()
+@mcp.tool()
 async def create_event(
     team_id: int,
     name: str,
@@ -430,7 +429,7 @@ async def create_event(
             return [TextContent(type="text", text=f"❌ Error creating event: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def update_event(
     event_id: int,
     name: Optional[str] = None,
@@ -485,7 +484,7 @@ async def update_event(
             return [TextContent(type="text", text=f"❌ Error updating event: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def delete_event(event_id: int) -> list[TextContent]:
     """
     Delete an event.
@@ -510,7 +509,7 @@ async def delete_event(event_id: int) -> list[TextContent]:
             return [TextContent(type="text", text=f"❌ Error deleting event: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def create_member(
     team_id: int,
     first_name: str,
@@ -566,7 +565,7 @@ async def create_member(
             return [TextContent(type="text", text=f"❌ Error creating member: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def update_member(
     member_id: int,
     first_name: Optional[str] = None,
@@ -620,7 +619,7 @@ async def update_member(
             return [TextContent(type="text", text=f"❌ Error updating member: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def delete_member(member_id: int) -> list[TextContent]:
     """
     Remove a member from a team.
@@ -645,7 +644,7 @@ async def delete_member(member_id: int) -> list[TextContent]:
             return [TextContent(type="text", text=f"❌ Error deleting member: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def update_availability(
     availability_id: int,
     status: str
@@ -678,7 +677,7 @@ async def update_availability(
             return [TextContent(type="text", text=f"❌ Error updating availability: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def create_assignment(
     event_id: int,
     member_id: int,
@@ -727,7 +726,7 @@ async def create_assignment(
             return [TextContent(type="text", text=f"❌ Error creating assignment: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def delete_assignment(assignment_id: int) -> list[TextContent]:
     """
     Delete an assignment.
@@ -752,7 +751,7 @@ async def delete_assignment(assignment_id: int) -> list[TextContent]:
             return [TextContent(type="text", text=f"❌ Error deleting assignment: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def create_location(
     team_id: int,
     name: str,
@@ -800,7 +799,7 @@ async def create_location(
             return [TextContent(type="text", text=f"❌ Error creating location: {str(e)}")]
 
 
-@app.tool()
+@mcp.tool()
 async def delete_location(location_id: int) -> list[TextContent]:
     """
     Delete a location.
@@ -829,18 +828,5 @@ async def delete_location(location_id: int) -> list[TextContent]:
 # SERVER MAIN
 # ============================================================================
 
-async def main():
-    """Run the MCP server"""
-    from mcp.server.stdio import stdio_server
-
-    async with stdio_server() as (read_stream, write_stream):
-        await app.run(
-            read_stream,
-            write_stream,
-            app.create_initialization_options()
-        )
-
-
 if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    mcp.run()

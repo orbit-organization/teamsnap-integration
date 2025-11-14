@@ -118,19 +118,26 @@ class TestToolOutput:
         from server import create_event
         from client import TeamSnapAsyncClient
 
-        with patch.object(TeamSnapAsyncClient, 'create_event', new_callable=AsyncMock) as mock_create:
-            mock_create.return_value = sample_event_data
+        # Disable readonly mode for this test
+        with patch('os.getenv') as mock_getenv:
+            mock_getenv.side_effect = lambda key, default=None: {
+                'TEAMSNAP_ACCESS_TOKEN': 'test_token',
+                'TEAMSNAP_READONLY': 'false'
+            }.get(key, default)
 
-            result = await create_event(
-                team_id=12345,
-                name="Practice",
-                start_date="2025-01-15T14:00:00Z"
-            )
+            with patch.object(TeamSnapAsyncClient, 'create_event', new_callable=AsyncMock) as mock_create:
+                mock_create.return_value = sample_event_data
 
-            assert isinstance(result, list)
-            assert len(result) > 0
-            assert result[0].type == "text"
-            assert "Successfully created" in result[0].text or "✅" in result[0].text
+                result = await create_event(
+                    team_id=12345,
+                    name="Practice",
+                    start_date="2025-01-15T14:00:00Z"
+                )
+
+                assert isinstance(result, list)
+                assert len(result) > 0
+                assert result[0].type == "text"
+                assert "Successfully created" in result[0].text or "✅" in result[0].text
 
     @pytest.mark.asyncio
     async def test_create_event_error_format(self, mock_env):
@@ -181,19 +188,26 @@ class TestToolOutput:
         """Test update_event handles no fields provided"""
         from server import update_event
 
-        result = await update_event(event_id=12345)
+        # Disable readonly mode for this test
+        with patch('os.getenv') as mock_getenv:
+            mock_getenv.side_effect = lambda key, default=None: {
+                'TEAMSNAP_ACCESS_TOKEN': 'test_token',
+                'TEAMSNAP_READONLY': 'false'
+            }.get(key, default)
 
-        assert isinstance(result, list)
-        assert "No fields provided" in result[0].text
+            result = await update_event(event_id=12345)
+
+            assert isinstance(result, list)
+            assert "No fields provided" in result[0].text
 
 
 class TestServerInitialization:
     """Test MCP server initialization"""
 
     def test_server_app_exists(self):
-        """Test that server app instance exists"""
-        from server import app
-        assert app is not None
+        """Test that server mcp instance exists"""
+        from server import mcp
+        assert mcp is not None
 
     def test_get_client_function_exists(self):
         """Test that get_client function exists"""
