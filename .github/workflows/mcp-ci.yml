@@ -1,0 +1,78 @@
+name: MCP Server CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'teamsnap_mcp/**'
+      - '.github/workflows/mcp-ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'teamsnap_mcp/**'
+      - '.github/workflows/mcp-ci.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        working-directory: teamsnap_mcp
+        run: uv sync --all-extras
+
+      - name: Check code can import
+        working-directory: teamsnap_mcp
+        run: |
+          uv run python -c "from client import TeamSnapAsyncClient; print('✓ Client import successful')"
+          uv run python -c "from server import app; print('✓ Server import successful')"
+
+      - name: Run tests
+        working-directory: teamsnap_mcp
+        env:
+          TEAMSNAP_ACCESS_TOKEN: test_token_for_ci
+        run: |
+          uv run pytest tests/ -v
+
+      - name: Check Python syntax
+        working-directory: teamsnap_mcp
+        run: |
+          uv run python -m py_compile *.py
+          echo "✓ Python syntax check passed"
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        working-directory: teamsnap_mcp
+        run: uv sync
+
+      - name: Check Python syntax
+        working-directory: teamsnap_mcp
+        run: |
+          uv run python -m py_compile *.py
+          echo "✓ Python syntax check passed"

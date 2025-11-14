@@ -1,0 +1,98 @@
+name: MCP Server - Update Dependencies
+
+on:
+  schedule:
+    # Run every Monday at 9:30am UTC (30 min after main integration)
+    - cron: '30 9 * * 1'
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Update dependencies
+        working-directory: teamsnap_mcp
+        run: |
+          echo "📦 Updating MCP server dependencies..."
+          uv sync --upgrade
+          echo "✅ Dependencies updated"
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet teamsnap_mcp/uv.lock; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No dependency changes detected"
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Dependency changes detected"
+          fi
+
+      - name: Run tests
+        if: steps.changes.outputs.changes == 'true'
+        working-directory: teamsnap_mcp
+        env:
+          TEAMSNAP_ACCESS_TOKEN: test_token_for_ci
+        run: |
+          uv run pytest tests/ -v
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            Update MCP server dependencies
+
+            Automated weekly dependency update for TeamSnap MCP server.
+
+            🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+            Co-Authored-By: Claude <noreply@anthropic.com>
+          branch: mcp-update-dependencies
+          delete-branch: true
+          title: 'Update MCP Server Dependencies'
+          body: |
+            ## Automated Dependency Update - MCP Server
+
+            This PR updates all dependencies for the TeamSnap MCP server to their latest compatible versions.
+
+            ### What Changed
+            - Updated Python packages in `teamsnap_mcp/uv.lock`
+            - All tests passed ✅
+
+            ### Testing
+            - ✅ Automated tests passed
+            - Manual testing recommended:
+              1. Pull this branch
+              2. `cd teamsnap_mcp && uv sync`
+              3. Test MCP server in Claude Desktop
+              4. Verify all tools work correctly
+
+            ### Next Steps
+            - Review the changes in `uv.lock`
+            - Test locally if desired
+            - Merge when ready
+
+            ---
+            🤖 This PR was created automatically by GitHub Actions
+          labels: dependencies, mcp-server, automated
+
+      - name: Output result
+        if: steps.changes.outputs.changes == 'false'
+        run: |
+          echo "✨ All MCP server dependencies are up to date!"

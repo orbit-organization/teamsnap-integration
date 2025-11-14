@@ -15,6 +15,22 @@ updates:
       prefix: "chore"
       include: "scope"
 
+  # Monitor MCP server pip dependencies
+  - package-ecosystem: "pip"
+    directory: "/teamsnap_mcp"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:30"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "mcp-server"
+      - "automated"
+    commit-message:
+      prefix: "chore(mcp)"
+      include: "scope"
+
   # Monitor GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"

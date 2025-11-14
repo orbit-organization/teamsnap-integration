@@ -2,6 +2,8 @@
 
 A clean, modern Python integration with the TeamSnap API v3, featuring OAuth 2.0 authentication using the out-of-band (OOB) flow for easy local testing.
 
+**New**: Now includes an MCP (Model Context Protocol) server for Claude Desktop! See [teamsnap_mcp/](teamsnap_mcp/) for details.
+
 ## Features
 
 - **OAuth 2.0 Authentication**: Complete implementation using out-of-band (OOB) flow
@@ -9,6 +11,7 @@ A clean, modern Python integration with the TeamSnap API v3, featuring OAuth 2.0
 - **Clean API Client**: Easy-to-use methods for common TeamSnap operations
 - **Type Hints**: Full type annotations for better IDE support
 - **Local Testing**: Simple copy/paste authentication flow for local testing
+- **MCP Server**: Connect Claude Desktop to your TeamSnap data with read/write access
 
 ## Project Structure
 
@@ -19,6 +22,10 @@ A clean, modern Python integration with the TeamSnap API v3, featuring OAuth 2.0
 ├── teamsnap_client.py       # API client
 ├── example.py               # Example usage script
 ├── requirements.txt         # Python dependencies
+├── teamsnap_mcp/           # MCP server for Claude Desktop
+│   ├── server.py           # MCP server implementation
+│   ├── client.py           # Async API client
+│   └── README.md           # MCP server documentation
 └── README.md               # This file
 ```
 
@@ -332,6 +339,57 @@ uv run python example.py
 ```
 
 For detailed maintenance procedures, see [MAINTENANCE.md](MAINTENANCE.md).
+
+## MCP Server for Claude Desktop
+
+Want to give Claude Desktop access to your TeamSnap data? Check out the MCP server!
+
+### What is MCP?
+
+Model Context Protocol (MCP) is an open standard by Anthropic that lets Claude connect to external tools and data sources. The TeamSnap MCP server gives Claude the ability to:
+
+- ✅ **Read** your teams, events, members, assignments, and more
+- ✅ **Write** create events, add members, update availability
+- ✅ **Manage** your TeamSnap data directly from conversations with Claude
+
+### Quick Start
+
+```bash
+# From the teamsnap_mcp directory
+cd teamsnap_mcp
+
+# Follow the quick start guide
+cat QUICKSTART.md
+```
+
+### Features
+
+- **19+ Tools**: List teams, create events, manage members, and more
+- **Full CRUD**: Create, read, update, and delete TeamSnap resources
+- **Async**: High-performance async client using httpx
+- **Well-Tested**: Comprehensive test suite with pytest
+- **Auto-Maintained**: Same automation as main integration (Dependabot, CI, API monitoring)
+
+### Documentation
+
+- [teamsnap_mcp/README.md](teamsnap_mcp/README.md) - Full documentation
+- [teamsnap_mcp/QUICKSTART.md](teamsnap_mcp/QUICKSTART.md) - 5-minute setup guide
+- [teamsnap_mcp/MAINTENANCE.md](teamsnap_mcp/MAINTENANCE.md) - Maintenance procedures
+- [teamsnap_mcp/CLAUDE_MCP.md](teamsnap_mcp/CLAUDE_MCP.md) - Developer guide
+
+### Example Usage in Claude Desktop
+
+Once configured, you can ask Claude:
+
+> "List my TeamSnap teams"
+
+> "Create a practice for team 12345 on January 15 at 2pm"
+
+> "Who's available for event 67890?"
+
+> "Add John Doe to team 12345"
+
+Claude will use the MCP tools to interact with your TeamSnap account!
 
 ## API Documentation
 

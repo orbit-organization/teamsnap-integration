@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "teamsnap": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/ABSOLUTE/PATH/TO/teamsnap_mcp",
+        "python",
+        "server.py"
+      ],
+      "env": {
+        "TEAMSNAP_ACCESS_TOKEN": "your_access_token_here"
+      }
+    }
+  }
+}
