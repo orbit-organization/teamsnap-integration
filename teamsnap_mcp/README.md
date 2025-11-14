@@ -70,9 +70,17 @@ Edit `.env` and add your access token:
 
 ```env
 TEAMSNAP_ACCESS_TOKEN=your_actual_token_from_config.ini
+
+# Read-Only Mode (IMPORTANT!)
+# Set to "true" for read-only (safe, recommended)
+# Set to "false" to enable write operations (creates, updates, deletes)
+TEAMSNAP_READONLY=true
 ```
 
-**Security Note**: Never commit `.env` to version control!
+**Security Notes**:
+- Never commit `.env` to version control!
+- **Server defaults to READ-ONLY mode** for safety
+- Only set `TEAMSNAP_READONLY=false` if you need write access
 
 ### 4. Configure Claude Desktop
 
@@ -96,7 +104,8 @@ Add the TeamSnap server:
         "server.py"
       ],
       "env": {
-        "TEAMSNAP_ACCESS_TOKEN": "your_access_token_here"
+        "TEAMSNAP_ACCESS_TOKEN": "your_access_token_here",
+        "TEAMSNAP_READONLY": "true"
       }
     }
   }
@@ -108,6 +117,62 @@ Add the TeamSnap server:
 ### 5. Restart Claude Desktop
 
 Quit and restart Claude Desktop to load the MCP server.
+
+## Read-Only Mode (Security Feature)
+
+**The MCP server defaults to READ-ONLY mode for your safety.**
+
+### What This Means
+
+- ✅ **Read operations work**: List teams, view events, check availability, etc.
+- ❌ **Write operations are blocked**: Create, update, delete operations will return an error
+
+### Why Read-Only?
+
+This prevents accidental modifications to your TeamSnap data through Claude. You must explicitly opt-in to enable writes.
+
+### Enabling Write Operations
+
+If you need to create, update, or delete TeamSnap data:
+
+**Option 1: Via .env file**
+```bash
+# Edit teamsnap_mcp/.env
+TEAMSNAP_READONLY=false
+```
+
+**Option 2: Via Claude Desktop config**
+```json
+{
+  "mcpServers": {
+    "teamsnap": {
+      ...
+      "env": {
+        "TEAMSNAP_ACCESS_TOKEN": "your_token",
+        "TEAMSNAP_READONLY": "false"
+      }
+    }
+  }
+}
+```
+
+**Then restart Claude Desktop.**
+
+### Checking Current Mode
+
+When you attempt a write operation in read-only mode, you'll see:
+
+```
+❌ Write operation blocked: Server is in READ-ONLY mode
+
+To enable write operations:
+1. Edit your .env file (or Claude Desktop config)
+2. Set: TEAMSNAP_READONLY=false
+3. Restart Claude Desktop
+
+⚠️  SECURITY: Only enable writes if you trust this integration and
+understand the risks of modifying your TeamSnap data.
+```
 
 ## Usage
 

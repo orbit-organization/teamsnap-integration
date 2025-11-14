@@ -35,7 +35,10 @@ Edit `.env` and paste your access token:
 
 ```env
 TEAMSNAP_ACCESS_TOKEN=your_actual_token_here
+TEAMSNAP_READONLY=true  # Recommended: keeps server read-only for safety
 ```
+
+**Note**: Server defaults to read-only mode. Set `TEAMSNAP_READONLY=false` only if you need write access.
 
 ### Step 3: Add to Claude Desktop
 
@@ -59,7 +62,8 @@ Add this configuration (replace the path with your actual absolute path):
         "server.py"
       ],
       "env": {
-        "TEAMSNAP_ACCESS_TOKEN": "your_access_token_here"
+        "TEAMSNAP_ACCESS_TOKEN": "your_access_token_here",
+        "TEAMSNAP_READONLY": "true"
       }
     }
   }

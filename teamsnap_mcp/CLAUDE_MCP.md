@@ -43,12 +43,58 @@ uv run python -c "from server import app; print('OK')"
 ```bash
 # Set up environment
 cp .env.example .env
-# Then edit .env with your access token
+# Then edit .env with your access token and readonly setting
 
 # Get access token from parent directory
 cd ..
 uv run python teamsnap_auth.py
 # Copy token from config.ini to teamsnap_mcp/.env
+
+# IMPORTANT: Read-only mode
+# Server defaults to readonly=true for safety
+# Set TEAMSNAP_READONLY=false only if write access needed
+```
+
+### Read-Only Mode (Security Feature)
+
+**The server defaults to READ-ONLY mode** to prevent accidental data modifications.
+
+**Environment Variable**: `TEAMSNAP_READONLY` (default: `"true"`)
+
+**Implementation** (server.py:30-59):
+- `is_readonly()` - Checks environment variable
+- `check_readonly()` - Returns error message if readonly
+- All write tools call `check_readonly()` at start
+
+**How it Works**:
+1. User attempts write operation (create_event, update_member, etc.)
+2. Tool calls `check_readonly()` immediately
+3. If readonly=true, returns helpful error message
+4. If readonly=false, proceeds with operation
+
+**To Enable Writes**:
+```bash
+# In .env
+TEAMSNAP_READONLY=false
+
+# Or in Claude Desktop config
+"env": {
+  "TEAMSNAP_READONLY": "false"
+}
+```
+
+**Testing Readonly Mode**:
+```bash
+# Test with readonly=true (default)
+export TEAMSNAP_ACCESS_TOKEN="token"
+export TEAMSNAP_READONLY="true"
+uv run python server.py
+# Try a write operation - should be blocked
+
+# Test with readonly=false
+export TEAMSNAP_READONLY="false"
+uv run python server.py
+# Write operations should work
 ```
 
 ## Project Structure

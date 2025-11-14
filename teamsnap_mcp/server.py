@@ -27,6 +27,38 @@ def get_client() -> TeamSnapAsyncClient:
     return TeamSnapAsyncClient()
 
 
+def is_readonly() -> bool:
+    """
+    Check if server is in read-only mode
+
+    Returns:
+        True if readonly mode is enabled (default), False if writes are allowed
+    """
+    readonly_env = os.getenv('TEAMSNAP_READONLY', 'true').lower()
+    return readonly_env in ('true', '1', 'yes', 'on')
+
+
+def check_readonly() -> Optional[list[TextContent]]:
+    """
+    Check if readonly mode is enabled and return error message if so
+
+    Returns:
+        Error message if readonly, None if writes are allowed
+    """
+    if is_readonly():
+        return [TextContent(
+            type="text",
+            text="❌ Write operation blocked: Server is in READ-ONLY mode\n\n"
+                 "To enable write operations:\n"
+                 "1. Edit your .env file (or Claude Desktop config)\n"
+                 "2. Set: TEAMSNAP_READONLY=false\n"
+                 "3. Restart Claude Desktop\n\n"
+                 "⚠️  SECURITY: Only enable writes if you trust this integration and "
+                 "understand the risks of modifying your TeamSnap data."
+        )]
+    return None
+
+
 # ============================================================================
 # READ TOOLS
 # ============================================================================
@@ -359,6 +391,11 @@ async def create_event(
     Returns:
         Created event details
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             response = await client.create_event(
@@ -414,6 +451,11 @@ async def update_event(
     Returns:
         Updated event details
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             # Build update fields
@@ -454,6 +496,11 @@ async def delete_event(event_id: int) -> list[TextContent]:
     Returns:
         Confirmation message
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             await client.delete_event(event_id)
@@ -484,6 +531,11 @@ async def create_member(
     Returns:
         Created member details
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             response = await client.create_member(
@@ -535,6 +587,11 @@ async def update_member(
     Returns:
         Updated member details
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             fields = {}
@@ -574,6 +631,11 @@ async def delete_member(member_id: int) -> list[TextContent]:
     Returns:
         Confirmation message
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             await client.delete_member(member_id)
@@ -633,6 +695,11 @@ async def create_assignment(
     Returns:
         Created assignment details
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             response = await client.create_assignment(
@@ -671,6 +738,11 @@ async def delete_assignment(assignment_id: int) -> list[TextContent]:
     Returns:
         Confirmation message
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             await client.delete_assignment(assignment_id)
@@ -697,6 +769,11 @@ async def create_location(
     Returns:
         Created location details
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             response = await client.create_location(
@@ -734,6 +811,11 @@ async def delete_location(location_id: int) -> list[TextContent]:
     Returns:
         Confirmation message
     """
+    # Check if server is in read-only mode
+    readonly_error = check_readonly()
+    if readonly_error:
+        return readonly_error
+
     async with get_client() as client:
         try:
             await client.delete_location(location_id)

@@ -10,7 +10,8 @@
         "server.py"
       ],
       "env": {
-        "TEAMSNAP_ACCESS_TOKEN": "your_access_token_here"
+        "TEAMSNAP_ACCESS_TOKEN": "your_access_token_here",
+        "TEAMSNAP_READONLY": "true"
       }
     }
   }
