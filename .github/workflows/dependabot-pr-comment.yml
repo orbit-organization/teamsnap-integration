@@ -1,0 +1,118 @@
+name: Enhance Dependabot PRs
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  add-context:
+    # Only run on Dependabot PRs
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Add detailed context comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prTitle = context.payload.pull_request.title;
+            const prBody = context.payload.pull_request.body || '';
+
+            // Determine dependency type and impact
+            let comment = '## 🤖 Automated Dependency Update Analysis\n\n';
+
+            if (prTitle.includes('github-actions') || prTitle.includes('actions/')) {
+              comment += `### Type: GitHub Actions Workflow Dependency\n\n`;
+              comment += `**Impact Level**: Low to Medium\n\n`;
+              comment += `#### What This Updates\n`;
+              comment += `This PR updates a GitHub Actions workflow dependency. These are the actions that run in CI/CD pipelines.\n\n`;
+              comment += `#### Potential Impact\n`;
+              comment += `- ✅ **Low Risk**: Workflow dependencies rarely break existing functionality\n`;
+              comment += `- 🔍 **Review**: Check if new version requires different parameters or permissions\n`;
+              comment += `- ⚙️ **Testing**: CI will run automatically - ensure all checks pass\n\n`;
+              comment += `#### Common Breaking Changes to Watch For\n`;
+              comment += `- Node.js version requirements (e.g., Node 16 → 20)\n`;
+              comment += `- New required permissions\n`;
+              comment += `- Deprecated parameters\n`;
+              comment += `- Changes to output format\n\n`;
+              comment += `#### Testing Checklist\n`;
+              comment += `- [ ] All CI checks passing on this PR\n`;
+              comment += `- [ ] No new errors in workflow logs\n`;
+              comment += `- [ ] Review release notes (linked in PR description)\n\n`;
+              comment += `#### Merge Recommendation\n`;
+              comment += `✅ **Safe to merge** if all CI checks pass and release notes show no breaking changes.\n\n`;
+            } else if (prTitle.includes('bump') && (prTitle.includes('pytest') || prTitle.includes('ipython') || prTitle.includes('requests'))) {
+              comment += `### Type: Python Dependency (Main Project)\n\n`;
+              comment += `**Impact Level**: Medium\n\n`;
+              comment += `#### What This Updates\n`;
+              comment += `This PR updates Python package dependencies for the main TeamSnap integration.\n\n`;
+              comment += `#### Potential Impact\n`;
+              const packageName = prTitle.match(/bump\s+(\S+)/i)?.[1] || 'dependency';
+              comment += `- 📦 **Package**: ${packageName}\n`;
+
+              if (packageName.includes('pytest')) {
+                comment += `- 🧪 **Testing Framework**: Changes may affect test execution\n`;
+                comment += `- ⚠️ **Risk**: Medium - test framework changes can be significant\n\n`;
+              } else if (packageName.includes('requests')) {
+                comment += `- 🌐 **HTTP Client**: Core dependency for TeamSnap API calls\n`;
+                comment += `- ⚠️ **Risk**: Medium-High - API interactions could be affected\n\n`;
+              } else {
+                comment += `- 📚 **Development Dependency**: Supporting tool for development\n`;
+                comment += `- ⚠️ **Risk**: Low - development tools rarely affect runtime\n\n`;
+              }
+
+              comment += `#### Testing Checklist\n`;
+              comment += `- [ ] All tests passing (\`uv run pytest tests/ -v\`)\n`;
+              comment += `- [ ] Try authentication: \`uv run python teamsnap_auth.py\`\n`;
+              comment += `- [ ] Test API client: \`uv run python example.py\`\n`;
+              comment += `- [ ] Check for deprecation warnings\n\n`;
+              comment += `#### Merge Recommendation\n`;
+              comment += `- ✅ Merge if tests pass and patch/minor version\n`;
+              comment += `- ⚠️ Test manually if major version bump\n\n`;
+            } else if (prTitle.includes('mcp') || prTitle.toLowerCase().includes('teamsnap-mcp')) {
+              comment += `### Type: MCP Server Dependency\n\n`;
+              comment += `**Impact Level**: High ⚠️\n\n`;
+              comment += `#### What This Updates\n`;
+              comment += `This PR updates dependencies for the MCP server (Claude Desktop integration).\n\n`;
+              comment += `#### Potential Impact\n`;
+              comment += `- 🔌 **MCP Server**: Direct impact on Claude Desktop integration\n`;
+              comment += `- ⚠️ **High Risk**: Changes can break Claude Desktop connectivity\n`;
+              comment += `- 🎯 **Critical Packages**: mcp, httpx, fastmcp\n\n`;
+              comment += `#### Testing Checklist\n`;
+              comment += `- [ ] All tests passing (\`cd teamsnap_mcp && uv run pytest tests/ -v\`)\n`;
+              comment += `- [ ] Server imports: \`uv run python -c "from server import mcp"\`\n`;
+              comment += `- [ ] **MUST TEST IN CLAUDE DESKTOP**:\n`;
+              comment += `  1. Update Claude Desktop config to point to this branch\n`;
+              comment += `  2. Restart Claude Desktop completely\n`;
+              comment += `  3. Try: "List my TeamSnap teams"\n`;
+              comment += `  4. Try: "Show me events for team [ID]"\n`;
+              comment += `  5. Check Claude Desktop logs for errors\n\n`;
+              comment += `#### Merge Recommendation\n`;
+              comment += `- 🚨 **DO NOT merge without Claude Desktop testing**\n`;
+              comment += `- ⚠️ Major version bumps require thorough testing\n`;
+              comment += `- ✅ Safe if patch version and all tests pass\n\n`;
+            } else {
+              comment += `### Type: General Dependency Update\n\n`;
+              comment += `**Impact Level**: Low to Medium\n\n`;
+              comment += `#### What This Updates\n`;
+              comment += `${prBody.substring(0, 200)}...\n\n`;
+              comment += `#### Testing Recommendations\n`;
+              comment += `- [ ] All automated tests passing\n`;
+              comment += `- [ ] Review release notes for breaking changes\n`;
+              comment += `- [ ] Test affected functionality if major version bump\n\n`;
+            }
+
+            comment += `---\n`;
+            comment += `💡 **Tip**: Check the "Files changed" tab to see the version diff in \`uv.lock\` or workflow files.\n\n`;
+            comment += `📚 **More Info**: See [Dependabot docs](https://docs.github.com/en/code-security/dependabot) for managing automated updates.\n`;
+
+            // Post the comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: comment
+            });

@@ -24,43 +24,67 @@ jobs:
 
       - name: Update dependencies
         run: |
+          # Capture current state
+          echo "📋 Current dependencies:" > /tmp/deps-before.txt
+          uv pip list >> /tmp/deps-before.txt 2>&1 || echo "No previous dependencies"
+
           # Update all dependencies to latest compatible versions
           uv sync --upgrade
+
+          # Capture new state
+          echo "📋 Updated dependencies:" > /tmp/deps-after.txt
+          uv pip list >> /tmp/deps-after.txt 2>&1
 
       - name: Run tests
         run: |
           uv run pytest tests/ -v
 
-      - name: Check if uv.lock changed
-        id: check-changes
+      - name: Analyze dependency changes
+        id: analyze
         run: |
           if git diff --quiet uv.lock; then
             echo "changed=false" >> $GITHUB_OUTPUT
-          else
-            echo "changed=true" >> $GITHUB_OUTPUT
+            exit 0
           fi
 
+          echo "changed=true" >> $GITHUB_OUTPUT
+
+          # Generate change summary
+          echo "## Dependency Changes" > /tmp/pr-body.md
+          echo "" >> /tmp/pr-body.md
+          echo "### Updated Packages" >> /tmp/pr-body.md
+          echo "" >> /tmp/pr-body.md
+
+          # Compare package versions (basic diff)
+          if [ -f /tmp/deps-before.txt ] && [ -f /tmp/deps-after.txt ]; then
+            echo '```' >> /tmp/pr-body.md
+            diff /tmp/deps-before.txt /tmp/deps-after.txt | grep -E '^[<>]' | head -20 || echo "No version changes detected in pip list"
+            echo '```' >> /tmp/pr-body.md
+          fi
+
+          echo "" >> /tmp/pr-body.md
+          echo "### Files Changed" >> /tmp/pr-body.md
+          echo "- \`uv.lock\` - Dependency lock file updated" >> /tmp/pr-body.md
+          echo "" >> /tmp/pr-body.md
+          echo "### Impact Assessment" >> /tmp/pr-body.md
+          echo "- ✅ All tests passing" >> /tmp/pr-body.md
+          echo "- 🔍 Review changes above for major version bumps" >> /tmp/pr-body.md
+          echo "- ⚠️ Breaking changes possible if major versions changed" >> /tmp/pr-body.md
+          echo "" >> /tmp/pr-body.md
+          echo "### Testing Recommendations" >> /tmp/pr-body.md
+          echo "1. Pull this branch" >> /tmp/pr-body.md
+          echo "2. Run \`uv sync\` to update your local environment" >> /tmp/pr-body.md
+          echo "3. Run \`uv run python example.py\` to verify basic functionality" >> /tmp/pr-body.md
+          echo "4. Test authentication: \`uv run python teamsnap_auth.py\`" >> /tmp/pr-body.md
+
       - name: Create Pull Request
-        if: steps.check-changes.outputs.changed == 'true'
+        if: steps.analyze.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update Python dependencies"
           title: "🔄 Update Python Dependencies"
-          body: |
-            ## Automated Dependency Update
-
-            This PR updates Python dependencies to their latest compatible versions.
-
-            ### Changes
-            - Updated `uv.lock` with latest dependency versions
-
-            ### Next Steps
-            - Review the changes
-            - Test locally: `uv sync && uv run python example.py`
-            - Merge if everything works
-
-            ---
-            *This PR was automatically created by GitHub Actions*
+          body-path: /tmp/pr-body.md
           branch: automated/update-dependencies
           delete-branch: true
+          labels: dependencies, automated

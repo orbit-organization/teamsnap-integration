@@ -27,23 +27,88 @@ jobs:
       - name: Update dependencies
         working-directory: teamsnap_mcp
         run: |
+          # Capture current state
+          echo "📋 Current MCP dependencies:" > /tmp/mcp-deps-before.txt
+          uv pip list >> /tmp/mcp-deps-before.txt 2>&1 || echo "No previous dependencies"
+
           echo "📦 Updating MCP server dependencies..."
           uv sync --upgrade
           echo "✅ Dependencies updated"
 
-      - name: Check for changes
-        id: changes
+          # Capture new state
+          echo "📋 Updated MCP dependencies:" > /tmp/mcp-deps-after.txt
+          uv pip list >> /tmp/mcp-deps-after.txt 2>&1
+
+      - name: Analyze dependency changes
+        id: analyze
         run: |
           if git diff --quiet teamsnap_mcp/uv.lock; then
             echo "changes=false" >> $GITHUB_OUTPUT
             echo "No dependency changes detected"
-          else
-            echo "changes=true" >> $GITHUB_OUTPUT
-            echo "Dependency changes detected"
+            exit 0
           fi
 
+          echo "changes=true" >> $GITHUB_OUTPUT
+          echo "Dependency changes detected"
+
+          # Generate detailed PR body
+          cat > /tmp/mcp-pr-body.md << 'EOFMARKER'
+          ## Automated Dependency Update - MCP Server
+
+          This PR updates all dependencies for the TeamSnap MCP server to their latest compatible versions.
+
+          ### Updated Packages
+
+          EOFMARKER
+
+          # Add version diff
+          if [ -f /tmp/mcp-deps-before.txt ] && [ -f /tmp/mcp-deps-after.txt ]; then
+            echo '```diff' >> /tmp/mcp-pr-body.md
+            diff /tmp/mcp-deps-before.txt /tmp/mcp-deps-after.txt | grep -E '^[<>]' | head -30 || echo "No version changes in pip list output"
+            echo '```' >> /tmp/mcp-pr-body.md
+          fi
+
+          cat >> /tmp/mcp-pr-body.md << 'EOFMARKER'
+
+          ### Files Changed
+          - `teamsnap_mcp/uv.lock` - MCP server dependency lock file
+
+          ### Impact Assessment
+          - ✅ All automated tests passed
+          - 🔍 **Review for breaking changes**: Check if any packages have major version bumps
+          - ⚠️ **MCP Protocol**: Verify `mcp` package changes don't break tool definitions
+          - 🔌 **httpx/FastMCP**: These are critical - test thoroughly if updated
+
+          ### Critical Dependencies to Watch
+          - `mcp` - Model Context Protocol SDK
+          - `httpx` - Async HTTP client (used for TeamSnap API)
+          - `python-dotenv` - Environment variable management
+
+          Major version changes in these require extra testing!
+
+          ### Testing Checklist
+          - [ ] Pull this branch
+          - [ ] Run `cd teamsnap_mcp && uv sync`
+          - [ ] Verify imports: `uv run python -c "from server import mcp; from client import TeamSnapAsyncClient"`
+          - [ ] Run tests: `export TEAMSNAP_ACCESS_TOKEN=test && uv run pytest tests/ -v`
+          - [ ] **Test in Claude Desktop**:
+            1. Update config to point to this branch
+            2. Restart Claude Desktop
+            3. Try: "List my TeamSnap teams"
+            4. Try creating/updating data (if readonly mode disabled)
+          - [ ] Check no errors in Claude Desktop logs
+
+          ### Merge Safety
+          - ✅ Safe to merge if tests pass and no major version bumps
+          - ⚠️ Test in Claude Desktop before merging if major versions changed
+          - 🚨 Do NOT merge if `mcp` package has breaking changes without testing
+
+          ---
+          🤖 This PR was created automatically by GitHub Actions
+          EOFMARKER
+
       - name: Run tests
-        if: steps.changes.outputs.changes == 'true'
+        if: steps.analyze.outputs.changes == 'true'
         working-directory: teamsnap_mcp
         env:
           TEAMSNAP_ACCESS_TOKEN: test_token_for_ci
@@ -51,7 +116,7 @@ jobs:
           uv run pytest tests/ -v
 
       - name: Create Pull Request
-        if: steps.changes.outputs.changes == 'true'
+        if: steps.analyze.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -65,34 +130,11 @@ jobs:
             Co-Authored-By: Claude <noreply@anthropic.com>
           branch: mcp-update-dependencies
           delete-branch: true
-          title: 'Update MCP Server Dependencies'
-          body: |
-            ## Automated Dependency Update - MCP Server
-
-            This PR updates all dependencies for the TeamSnap MCP server to their latest compatible versions.
-
-            ### What Changed
-            - Updated Python packages in `teamsnap_mcp/uv.lock`
-            - All tests passed ✅
-
-            ### Testing
-            - ✅ Automated tests passed
-            - Manual testing recommended:
-              1. Pull this branch
-              2. `cd teamsnap_mcp && uv sync`
-              3. Test MCP server in Claude Desktop
-              4. Verify all tools work correctly
-
-            ### Next Steps
-            - Review the changes in `uv.lock`
-            - Test locally if desired
-            - Merge when ready
-
-            ---
-            🤖 This PR was created automatically by GitHub Actions
+          title: '🔄 Update MCP Server Dependencies'
+          body-path: /tmp/mcp-pr-body.md
           labels: dependencies, mcp-server, automated
 
       - name: Output result
-        if: steps.changes.outputs.changes == 'false'
+        if: steps.analyze.outputs.changes == 'false'
         run: |
           echo "✨ All MCP server dependencies are up to date!"
